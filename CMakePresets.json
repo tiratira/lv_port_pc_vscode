@@ -1,0 +1,170 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true
+      }
+    },
+    {
+      "name": "emscripten-base",
+      "inherits": [
+        "base"
+      ],
+      "hidden": true,
+      "toolchainFile": "$env{EMSDK}\\upstream\\emscripten\\cmake\\Modules\\Platform\\Emscripten.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "ndk-base",
+      "inherits": [
+        "base"
+      ],
+      "hidden": true,
+      "toolchainFile": "$env{NDK}\\build\\cmake\\android.toolchain.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "ohos-base",
+      "inherits": [
+        "base"
+      ],
+      "hidden": true,
+      "toolchainFile": "$env{OHNDK}\\build\\cmake\\ohos.toolchain.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "clang-base",
+      "hidden": true,
+      "inherits": [
+        "base"
+      ],
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "ios-base",
+      "hidden": true,
+      "generator": "Xcode",
+      "toolchainFile": "toolchain\\ios.toolchain.cmake",
+      "cacheVariables": {
+        "ENABLE_BITCODE": false
+      }
+    },
+    {
+      "name": "iOS",
+      "inherits": [
+        "ios-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "PLATFORM": "OS64"
+      }
+    },
+    {
+      "name": "Emscripten-Debug",
+      "inherits": [
+        "emscripten-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Emscripten-Release",
+      "inherits": [
+        "emscripten-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}"
+    },
+    {
+      "name": "Clang-Debug",
+      "inherits": [
+        "clang-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "Clang-Release",
+      "inherits": [
+        "clang-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "NDK-Debug",
+      "inherits": [
+        "ndk-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ANDROID_PLATFORM": "31",
+        "ANDROID_ABI": "arm64-v8a"
+      }
+    },
+    {
+      "name": "NDK-Release",
+      "inherits": [
+        "ndk-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ANDROID_PLATFORM": "31",
+        "ANDROID_ABI": "arm64-v8a"
+      }
+    },
+    {
+      "name": "HarmonyOS-Debug-x86_64",
+      "inherits": [
+        "ohos-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "OHOS_ARCH": "x86_64"
+      }
+    },
+    {
+      "name": "HarmonyOS-Debug-arm64-v8a",
+      "inherits": [
+        "ohos-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "OHOS_ARCH": "arm64-v8a"
+      }
+    },
+    {
+      "name": "HarmonyOS-Release",
+      "inherits": [
+        "ohos-base"
+      ],
+      "binaryDir": "${sourceDir}/Build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "8 Cores",
+      "configurePreset": "base",
+      "jobs": 8
+    }
+  ]
+}

@@ -10,3 +10,4 @@ ui/
 
 # VSCode
 .vscode
+compile_commands.json
