@@ -1,5 +1,5 @@
 #ifndef LVGL_STORAGE_PATH
-#define LVGL_STORAGE_PATH "D:/Projects/lv_port_pc_vscode/main/assets"
+#define LVGL_STORAGE_PATH "E:/Projects/lv_port_pc_vscode/main/assets"
 #endif
 
 #define LVGL_DIR LVGL_STORAGE_PATH "/"
@@ -14,7 +14,7 @@
        "/"                \
        "font/",           \
        y)
-#define LVGL_IMAGE_PATH(y) CONN(LVGL_DIR "image/", y)
+#define LVGL_IMAGE_PATH(y) LVGL_DIR "image/" y
 #define LVGL_VIDEO_PATH(y) \
   CONN(LVGL_STORAGE_PATH   \
        "/"                 \

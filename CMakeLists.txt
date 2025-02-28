@@ -82,7 +82,7 @@ endif()
 
 # Conditionally include and link FFmpeg libraries if LV_USE_FFMPEG is enabled
 if(LV_USE_FFMPEG)
-    set(FFMPEG_DIR F:/Library/ffmpeg-7.1-full_build-shared)
+    set(FFMPEG_DIR E:/Projects/ffmpeg-7.1-full_build-shared)
     target_include_directories(lvgl PUBLIC ${FFMPEG_DIR}/include)
     target_link_libraries(main ${FFMPEG_DIR}/lib/avformat.lib ${FFMPEG_DIR}/lib/avcodec.lib ${FFMPEG_DIR}/lib/avutil.lib ${FFMPEG_DIR}/lib/swscale.lib)
 endif()
