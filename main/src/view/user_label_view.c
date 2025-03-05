@@ -24,43 +24,11 @@ lv_obj_t* user_sel_sliding_panel = 0;
 static int user_count = 2;  // 记录当前用户数量
 
 const char* user_head_list[] = {
-    LVGL_IMAGE_PATH("uesr_label_images/img_selected_head_sculpture.png"),
-    LVGL_IMAGE_PATH("uesr_label_images/img_add_uesr.png"),  // 添加用户按钮
-    LVGL_IMAGE_PATH("uesr_label_images/img_unselected_head_sculpture.png"),
+    LVGL_IMAGE_PATH("user_label_images/img_selected_head_sculpture.png"),
+    LVGL_IMAGE_PATH("user_label_images/img_add_user.png"),  // 添加用户按钮
+    LVGL_IMAGE_PATH("user_label_images/img_unselected_head_sculpture.png"),
 
 };
-
-// static void user_selected_event(lv_event_t* e) {
-//   lv_obj_t* obj = lv_event_get_target(e);
-//   // 重置所有方形的边框透明度
-//   lv_obj_set_style_border_opa(simplified_chinese_square, LV_OPA_0, 0);
-//   lv_obj_set_style_border_opa(traditional_chinese_square, LV_OPA_0, 0);
-//   lv_obj_set_style_border_opa(english_square, LV_OPA_0, 0);
-//   lv_obj_set_style_bg_opa(simplified_chinese_square, LV_OPA_100, 0);
-//   lv_obj_set_style_bg_opa(traditional_chinese_square, LV_OPA_100, 0);
-//   lv_obj_set_style_bg_opa(english_square, LV_OPA_100, 0);
-//   lv_obj_set_style_text_color(simplified_chinese_selection_text,
-//                               lv_color_hex(0xFFFFFF), 0);
-//   lv_obj_set_style_text_color(traditional_chinese_selection_text,
-//                               lv_color_hex(0xFFFFFF), 0);
-//   lv_obj_set_style_text_color(english_selection_text, lv_color_hex(0xFFFFFF),
-//                               0);
-//   // 设置被点击方形的边框透明度为0
-//   lv_obj_set_style_border_opa(obj, LV_OPA_100, 0);
-//   lv_obj_set_style_bg_opa(obj, LV_OPA_0, 0);
-//   // 根据点击的方形设置对应的文字颜色
-//   if (obj == simplified_chinese_square) {
-//     lv_obj_set_style_text_color(simplified_chinese_selection_text,
-//                                 lv_color_hex(0xE9BD86), 0);
-//   } else if (obj == traditional_chinese_square) {
-//     lv_obj_set_style_text_color(traditional_chinese_selection_text,
-//                                 lv_color_hex(0xE9BD86), 0);
-//   } else if (obj == english_square) {
-//     lv_obj_set_style_text_color(english_selection_text,
-//     lv_color_hex(0xE9BD86),
-//                                 0);
-//   }
-// }
 
 // 新增点击事件处理函数
 static void add_user_handler(lv_event_t* e) {
@@ -90,17 +58,46 @@ static void panel_click_handler(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_obj_t* label = (lv_obj_t*)lv_event_get_user_data(e);
 
-  // 重置之前选中的样式
+  // 修正遍历逻辑：使用整型索引
+  // 添加空指针检查
   if (selected_panel) {
-      lv_obj_set_style_border_opa(selected_panel, LV_OPA_0, 0);
-      lv_obj_set_style_text_color(selected_label, lv_color_hex(0xFFFFFF), 0);
-      
+    int32_t index = 0;
+    lv_obj_t* child = lv_obj_get_child(selected_panel, index);
+    while (child != NULL) {
+      if (lv_obj_check_type(child, &lv_image_class)) {
+        lv_image_set_src(child, user_head_list[2]);
+        break;
+      }
+      index++;
+      child = lv_obj_get_child(selected_panel, index);
+    }
   }
 
+  // 重置所有面板样式
+  if (selected_panel && lv_obj_is_valid(selected_panel)) {
+    lv_obj_set_style_border_opa(selected_panel, LV_OPA_0, 0);
+    if (selected_label) {
+      lv_obj_set_style_text_color(selected_label, lv_color_hex(0xFFFFFF), 0);
+    }
+  }
   // 设置当前选中样式
-  lv_obj_set_style_border_opa(panel, LV_OPA_100, 0);
-  lv_obj_set_style_text_color(label, lv_color_hex(0xE9BD86), 0);
-  
+  if (panel && lv_obj_is_valid(panel)) {
+    lv_obj_set_style_border_opa(panel, LV_OPA_100, 0);
+    lv_obj_set_style_text_color(label, lv_color_hex(0xE9BD86), 0);
+  }
+
+  // 修正第二个遍历逻辑
+  int32_t new_index = 0;
+  lv_obj_t* new_child = lv_obj_get_child(panel, new_index);
+  while (new_child) {
+    if (lv_obj_check_type(new_child, &lv_image_class)) {
+      lv_image_set_src(new_child, user_head_list[0]);
+      break;
+    }
+    new_index++;
+    new_child = lv_obj_get_child(panel, new_index);
+  }
+
   // 更新选中状态
   selected_panel = panel;
   selected_label = label;
@@ -108,6 +105,9 @@ static void panel_click_handler(lv_event_t* e) {
 
 static void user_selected_method(const char* head_path, const char* head_text,
                                  int index) {
+  // 添加参数校验
+  if (!head_path || !head_text || index < 0) return;
+
   // 创建一个内小面板对象
   lv_obj_t* sliding_inside_panel = lv_obj_create(user_sel_sliding_panel);
   // 禁用 sliding_inside_panel 的滚动
@@ -126,6 +126,9 @@ static void user_selected_method(const char* head_path, const char* head_text,
   // 添加高级点击穿透
   lv_obj_add_flag(sliding_inside_panel, LV_OBJ_FLAG_ADV_HITTEST);
 
+  // 在创建对象后立即设置用户数据
+  lv_obj_set_user_data(sliding_inside_panel, (void*)(intptr_t)index);
+
   // 创建一个圆
   lv_obj_t* circle = lv_obj_create(sliding_inside_panel);
   lv_obj_set_size(circle, 120, 120);
@@ -133,6 +136,10 @@ static void user_selected_method(const char* head_path, const char* head_text,
   lv_obj_set_style_bg_color(circle, lv_color_hex(0x1F1915), 0);
   lv_obj_set_style_border_width(circle, 0, 0);
   lv_obj_align(circle, LV_ALIGN_CENTER, 0, -30);
+  lv_obj_add_flag(circle, LV_OBJ_FLAG_CLICKABLE);
+  // 添加事件转发到父面板
+  lv_obj_add_event_cb(circle, event_forwarder, LV_EVENT_CLICKED, NULL);
+  lv_obj_clear_flag(circle, LV_OBJ_FLAG_EVENT_BUBBLE);
 
   lv_obj_t* img = lv_image_create(sliding_inside_panel);
   lv_image_set_src(img, head_path);
@@ -142,9 +149,6 @@ static void user_selected_method(const char* head_path, const char* head_text,
   lv_obj_clear_flag(img, LV_OBJ_FLAG_EVENT_BUBBLE);
   // img居中
   lv_obj_align(img, LV_ALIGN_CENTER, 0, -30);
-  // 删除重复的点击标志设置和事件绑定
-  // lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
-  // lv_obj_add_event_cb(img, event_forwarder, LV_EVENT_CLICKED, NULL);
 
   lv_obj_t* user_name_text = lv_label_create(sliding_inside_panel);
   lv_label_set_text(user_name_text, head_text);
@@ -153,12 +157,16 @@ static void user_selected_method(const char* head_path, const char* head_text,
   // 居中对齐
   lv_obj_align(user_name_text, LV_ALIGN_CENTER, 0, 75);
   lv_obj_add_flag(user_name_text, LV_OBJ_FLAG_CLICKABLE);
+  // 添加事件转发到父面板
+  lv_obj_add_event_cb(user_name_text, event_forwarder, LV_EVENT_CLICKED, NULL);
   lv_obj_clear_flag(user_name_text, LV_OBJ_FLAG_EVENT_BUBBLE);
 
-  // 添加面板点击事件（排除添加按钮）
+  // 修改面板事件绑定方式（确保事件参数正确传递）
   if (index != 1) {
     lv_obj_add_event_cb(sliding_inside_panel, panel_click_handler,
                         LV_EVENT_CLICKED, user_name_text);
+    // 设置面板层级
+    lv_obj_move_foreground(sliding_inside_panel);
   }
 
   // 添加按钮（索引1）绑定特殊事件
@@ -241,10 +249,28 @@ lv_obj_t* user_label_view_init(void) {
   lv_obj_add_flag(user_sel_sliding_panel,
                   LV_OBJ_FLAG_CLICKABLE);  // 确保能点击到，不然点不到文字()
 
-  // 创建一个内小面板对象
+  // 创建默认用户面板
   user_selected_method(user_head_list[0], "标准用户", 0);
   user_selected_method(user_head_list[1], "添加用户", 1);  // 添加按钮
-  // user_selected_method(user_head_list[2], "用户2", 2);
+
+  // 新增：设置初始选中状态
+  selected_panel =
+      lv_obj_get_child(user_sel_sliding_panel, 0);  // 获取第一个面板
+  if (selected_panel) {
+    lv_obj_set_style_border_opa(selected_panel, LV_OPA_100, 0);
+    // 修正后的遍历逻辑
+    int32_t child_idx = 0;  // 使用整型索引
+    lv_obj_t* label = lv_obj_get_child(selected_panel, child_idx);
+    while (label) {
+      if (lv_obj_check_type(label, &lv_label_class)) break;
+      child_idx++;
+      label = lv_obj_get_child(selected_panel, child_idx);
+    }
+    if (label) {
+      lv_obj_set_style_text_color(label, lv_color_hex(0xE9BD86), 0);
+      selected_label = label;
+    }
+  }
 
   // 创建一个“确定”按钮
   user_label_sure_btn = lv_btn_create(user_label_view);
