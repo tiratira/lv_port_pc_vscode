@@ -21,6 +21,7 @@ lv_obj_t* user_label_text = 0;
 lv_obj_t* user_label_sure_btn = 0;
 lv_obj_t* user_label_sure_btn_text = 0;
 lv_obj_t* user_sel_sliding_panel = 0;
+lv_obj_t* user_name_text = 0;
 static int user_count = 2;  // 记录当前用户数量
 
 const char* user_head_list[] = {
@@ -76,14 +77,19 @@ static void panel_click_handler(lv_event_t* e) {
   // 重置所有面板样式
   if (selected_panel && lv_obj_is_valid(selected_panel)) {
     lv_obj_set_style_border_opa(selected_panel, LV_OPA_0, 0);
-    if (selected_label) {
-      lv_obj_set_style_text_color(selected_label, lv_color_hex(0xFFFFFF), 0);
+    if (selected_panel && selected_label) {
+      // 添加对标签对象的安全检查
+      if (lv_obj_is_valid(selected_label)) {
+        lv_obj_set_style_text_color(selected_label, lv_color_hex(0xFFFFFF), 0);
+      }
     }
   }
   // 设置当前选中样式
   if (panel && lv_obj_is_valid(panel)) {
     lv_obj_set_style_border_opa(panel, LV_OPA_100, 0);
-    lv_obj_set_style_text_color(label, lv_color_hex(0xE9BD86), 0);
+    if (label && lv_obj_is_valid(label)) {
+      lv_obj_set_style_text_color(label, lv_color_hex(0xE9BD86), 0);
+    }
   }
 
   // 修正第二个遍历逻辑
@@ -129,17 +135,18 @@ static void user_selected_method(const char* head_path, const char* head_text,
   // 在创建对象后立即设置用户数据
   lv_obj_set_user_data(sliding_inside_panel, (void*)(intptr_t)index);
 
-  // 创建一个圆
-  lv_obj_t* circle = lv_obj_create(sliding_inside_panel);
-  lv_obj_set_size(circle, 120, 120);
-  lv_obj_set_style_radius(circle, 60, 0);
-  lv_obj_set_style_bg_color(circle, lv_color_hex(0x1F1915), 0);
-  lv_obj_set_style_border_width(circle, 0, 0);
-  lv_obj_align(circle, LV_ALIGN_CENTER, 0, -30);
-  lv_obj_add_flag(circle, LV_OBJ_FLAG_CLICKABLE);
-  // 添加事件转发到父面板
-  lv_obj_add_event_cb(circle, event_forwarder, LV_EVENT_CLICKED, NULL);
-  lv_obj_clear_flag(circle, LV_OBJ_FLAG_EVENT_BUBBLE);
+  /// 创建一个圆（仅在非添加按钮时创建）
+  if (index != 1) {
+    lv_obj_t* circle = lv_obj_create(sliding_inside_panel);
+    lv_obj_set_size(circle, 120, 120);
+    lv_obj_set_style_radius(circle, 60, 0);
+    lv_obj_set_style_bg_color(circle, lv_color_hex(0x1F1915), 0);
+    lv_obj_set_style_border_width(circle, 0, 0);
+    lv_obj_align(circle, LV_ALIGN_CENTER, 0, -30);
+    lv_obj_add_flag(circle, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(circle, event_forwarder, LV_EVENT_CLICKED, NULL);
+    lv_obj_clear_flag(circle, LV_OBJ_FLAG_EVENT_BUBBLE);
+  }
 
   lv_obj_t* img = lv_image_create(sliding_inside_panel);
   lv_image_set_src(img, head_path);
@@ -150,32 +157,38 @@ static void user_selected_method(const char* head_path, const char* head_text,
   // img居中
   lv_obj_align(img, LV_ALIGN_CENTER, 0, -30);
 
-  lv_obj_t* user_name_text = lv_label_create(sliding_inside_panel);
-  lv_label_set_text(user_name_text, head_text);
-  lv_obj_set_style_text_color(user_name_text, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_set_style_text_font(user_name_text, &HarmonyOS_Sans_SC_Regular_26, 0);
-  // 居中对齐
-  lv_obj_align(user_name_text, LV_ALIGN_CENTER, 0, 75);
-  lv_obj_add_flag(user_name_text, LV_OBJ_FLAG_CLICKABLE);
-  // 添加事件转发到父面板
-  lv_obj_add_event_cb(user_name_text, event_forwarder, LV_EVENT_CLICKED, NULL);
-  lv_obj_clear_flag(user_name_text, LV_OBJ_FLAG_EVENT_BUBBLE);
-
-  // 修改面板事件绑定方式（确保事件参数正确传递）
+  // 仅在非添加按钮时创建文字标签和绑定事件
   if (index != 1) {
+    lv_obj_t* user_name_text = lv_label_create(sliding_inside_panel);
+    lv_label_set_text(user_name_text, head_text);
+    lv_obj_set_style_text_color(user_name_text, lv_color_hex(0xFFFFFF), 0);
+    lv_obj_set_style_text_font(user_name_text, &HarmonyOS_Sans_SC_Regular_26,
+                               0);
+    lv_obj_align(user_name_text, LV_ALIGN_CENTER, 0, 75);
+    lv_obj_add_flag(user_name_text, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(user_name_text, event_forwarder, LV_EVENT_CLICKED,
+                        NULL);
+    lv_obj_clear_flag(user_name_text, LV_OBJ_FLAG_EVENT_BUBBLE);
+    // 新增事件数据绑定（将标签对象作为用户数据）
     lv_obj_add_event_cb(sliding_inside_panel, panel_click_handler,
                         LV_EVENT_CLICKED, user_name_text);
-    // 设置面板层级
+  }
+  // 修改面板事件绑定方式（确保事件参数正确传递）
+  if (index != 1) {
+    // 立即绑定事件处理器（此时user_name_text在有效作用域内）
+    // lv_obj_add_event_cb(sliding_inside_panel, panel_click_handler,
+    //                     LV_EVENT_CLICKED, sliding_inside_panel);
     lv_obj_move_foreground(sliding_inside_panel);
   }
-
-  // 添加按钮（索引1）绑定特殊事件
-  if (index == 1) {
+  // 添加按钮处理逻辑
+  else {
+    lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
     lv_obj_add_event_cb(sliding_inside_panel, add_user_handler,
                         LV_EVENT_CLICKED, NULL);
-    lv_obj_set_style_bg_color(sliding_inside_panel, lv_color_hex(0x1A1A1A),
-                              0);  // 区别样式
+    lv_obj_set_style_bg_color(sliding_inside_panel, lv_color_hex(0x0F0C0A), 0);
   }
+
+  // 删除外层重复的条件判断
 }
 
 static void sliding_panel_scroll_end_event(lv_event_t* e) {
