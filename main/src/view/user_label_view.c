@@ -12,6 +12,10 @@ LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_30)
 static void user_selected_method(const char* head_path, const char* head_text,
                                  int index);
 
+// 在全局变量区域添加状态跟踪变量
+static lv_obj_t* selected_panel = NULL;
+static lv_obj_t* selected_label = NULL;
+
 lv_obj_t* user_label_view = 0;
 lv_obj_t* user_label_text = 0;
 lv_obj_t* user_label_sure_btn = 0;
@@ -80,6 +84,28 @@ static void event_forwarder(lv_event_t* e) {
   // 使用正确的事件发送API
   lv_obj_send_event(parent, LV_EVENT_CLICKED, NULL);
 }
+
+// 新增面板点击处理函数
+static void panel_click_handler(lv_event_t* e) {
+  lv_obj_t* panel = lv_event_get_target(e);
+  lv_obj_t* label = (lv_obj_t*)lv_event_get_user_data(e);
+
+  // 重置之前选中的样式
+  if (selected_panel) {
+      lv_obj_set_style_border_opa(selected_panel, LV_OPA_0, 0);
+      lv_obj_set_style_text_color(selected_label, lv_color_hex(0xFFFFFF), 0);
+      
+  }
+
+  // 设置当前选中样式
+  lv_obj_set_style_border_opa(panel, LV_OPA_100, 0);
+  lv_obj_set_style_text_color(label, lv_color_hex(0xE9BD86), 0);
+  
+  // 更新选中状态
+  selected_panel = panel;
+  selected_label = label;
+}
+
 static void user_selected_method(const char* head_path, const char* head_text,
                                  int index) {
   // 创建一个内小面板对象
@@ -94,7 +120,7 @@ static void user_selected_method(const char* head_path, const char* head_text,
                                 0);  // 设置边框的宽度为0像素
   lv_obj_set_style_border_color(sliding_inside_panel, lv_color_hex(0xE9BD86),
                                 0);
-  lv_obj_set_style_border_opa(sliding_inside_panel, LV_OPA_100, 0);
+  lv_obj_set_style_border_opa(sliding_inside_panel, LV_OPA_0, 0);
   lv_obj_add_flag(sliding_inside_panel,
                   LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
   // 添加高级点击穿透
@@ -122,12 +148,19 @@ static void user_selected_method(const char* head_path, const char* head_text,
 
   lv_obj_t* user_name_text = lv_label_create(sliding_inside_panel);
   lv_label_set_text(user_name_text, head_text);
-  lv_obj_set_style_text_color(user_name_text, lv_color_hex(0xE9BD86), 0);
+  lv_obj_set_style_text_color(user_name_text, lv_color_hex(0xFFFFFF), 0);
   lv_obj_set_style_text_font(user_name_text, &HarmonyOS_Sans_SC_Regular_26, 0);
   // 居中对齐
   lv_obj_align(user_name_text, LV_ALIGN_CENTER, 0, 75);
   lv_obj_add_flag(user_name_text, LV_OBJ_FLAG_CLICKABLE);
   lv_obj_clear_flag(user_name_text, LV_OBJ_FLAG_EVENT_BUBBLE);
+
+  // 添加面板点击事件（排除添加按钮）
+  if (index != 1) {
+    lv_obj_add_event_cb(sliding_inside_panel, panel_click_handler,
+                        LV_EVENT_CLICKED, user_name_text);
+  }
+
   // 添加按钮（索引1）绑定特殊事件
   if (index == 1) {
     lv_obj_add_event_cb(sliding_inside_panel, add_user_handler,
