@@ -1,5 +1,7 @@
+#include <src/core/lv_obj_tree.h>
 #include "global_def.h"
 #include "lvgl.h"
+#include "route.h"
 #include "stdio.h"
 
 LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_26)
@@ -10,9 +12,15 @@ lv_obj_t* img_child_lock_round = 0;
 lv_obj_t* img_child_lock = 0;
 lv_obj_t* child_lock_text = 0;
 
-static void child_lock_unlock_handler(lv_event_t * e);
+extern lv_obj_t* main_menu_view;
 
-void child_lock_view_init(void) {
+// 定义返回按钮的点击事件回调函数
+static void child_lock_unlock_event(lv_event_t* e) {
+  // 加载主菜单视图
+  navigate_to_view("main_menu_view");
+}
+
+lv_obj_t* child_lock_view_init(void) {
   child_lock_view = lv_obj_create(NULL);
   lv_obj_set_size(child_lock_view, 1280, 480);
   lv_obj_set_style_bg_color(child_lock_view, lv_color_hex(0x000000), 0);
@@ -28,7 +36,8 @@ void child_lock_view_init(void) {
                    LVGL_IMAGE_PATH("boot_view_images/img_child_lock.png"));
   lv_obj_align(img_child_lock, LV_ALIGN_CENTER, 0, -51);
   // 添加点击事件监听器
-  lv_obj_add_event_cb(img_child_lock, child_lock_unlock_handler, LV_EVENT_CLICKED, NULL);
+  lv_obj_add_event_cb(img_child_lock, child_lock_unlock_event, LV_EVENT_CLICKED,
+                      NULL);
   lv_obj_add_flag(img_child_lock, LV_OBJ_FLAG_CLICKABLE);
 
   child_lock_text = lv_label_create(child_lock_view);
@@ -41,12 +50,5 @@ void child_lock_view_init(void) {
   lv_obj_set_style_text_align(child_lock_text, LV_TEXT_ALIGN_CENTER,
                               0);  // 添加文字居中对齐
   lv_obj_align(child_lock_text, LV_ALIGN_CENTER, 0, 48);
+  return child_lock_view;
 }
-
-static void child_lock_unlock_handler(lv_event_t * e) {
-    // 处理童锁解锁事件
-    lv_obj_t * obj = lv_event_get_target(e);
-    lv_obj_del(obj);    
-    // 例如：关闭童锁界面，更新状态等
-    printf("童锁已解锁\n");
-  }

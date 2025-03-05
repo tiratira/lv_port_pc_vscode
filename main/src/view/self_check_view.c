@@ -113,7 +113,7 @@ void build_anim_arc(lv_obj_t* arc, int32_t x, int32_t y) {
   lv_obj_align(arc, LV_ALIGN_CENTER, x, y);  // 将圆环居中对齐
 }
 
-void self_check_view_init(void) {
+lv_obj_t* self_check_view_init(void) {
   self_check_view = lv_obj_create(NULL);
   lv_obj_set_size(self_check_view, 1280, 480);
   lv_obj_set_style_bg_color(self_check_view, lv_color_hex(0x000000), 0);
@@ -279,6 +279,8 @@ void self_check_view_init(void) {
   anim_targets[3] = arc_42;
 
   lv_timer_t* timer = lv_timer_create(change_target_timer_cb, 6000, 0);
+
+  return self_check_view;
 }
 
 // 不同状态时更新view

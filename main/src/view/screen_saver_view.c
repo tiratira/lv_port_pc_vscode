@@ -29,7 +29,7 @@ void timer_callback(lv_timer_t* timer) {
   }
 }
 
-void screen_saver_view_init(void) {
+lv_obj_t* screen_saver_view_init(void) {
   screen_saver_view = lv_obj_create(NULL);
   lv_obj_set_size(screen_saver_view, 1280, 480);
   lv_obj_set_style_bg_color(screen_saver_view, lv_color_hex(0x000000), 0);
@@ -57,4 +57,5 @@ void screen_saver_view_init(void) {
   lv_obj_align(touch_img, LV_ALIGN_TOP_RIGHT, -38, 37);
 
   lv_timer_t* timer = lv_timer_create(timer_callback, CHANGE_IMG_TIME, NULL);
+  return screen_saver_view;
 }

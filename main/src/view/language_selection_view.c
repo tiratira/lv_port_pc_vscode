@@ -12,49 +12,36 @@
 LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_26)
 LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_30)
 
+typedef struct {
+    lv_obj_t* square;
+    lv_obj_t* label;
+    const char* text;
+    int32_t x_pos;
+} LangOption;
+
+static LangOption lang_options[3];
 lv_obj_t* lan_sel_view = 0;
 lv_obj_t* lan_sel_text = 0;
-lv_obj_t* simplified_chinese_square = 0;
-lv_obj_t* traditional_chinese_square = 0;
-lv_obj_t* english_square = 0;
-lv_obj_t* simplified_chinese_selection_text = 0;
-lv_obj_t* traditional_chinese_selection_text = 0;
-lv_obj_t* english_selection_text = 0;
 lv_obj_t* lan_sel_sure_btn = 0;
 lv_obj_t* sure_btn_label = 0;
 
 static void square_click_event(lv_event_t* e) {
   lv_obj_t* obj = lv_event_get_target(e);
-  // 重置所有方形的边框透明度
-  lv_obj_set_style_border_opa(simplified_chinese_square, LV_OPA_0, 0);
-  lv_obj_set_style_border_opa(traditional_chinese_square, LV_OPA_0, 0);
-  lv_obj_set_style_border_opa(english_square, LV_OPA_0, 0);
-  lv_obj_set_style_bg_opa(simplified_chinese_square, LV_OPA_100, 0);
-  lv_obj_set_style_bg_opa(traditional_chinese_square, LV_OPA_100, 0);
-  lv_obj_set_style_bg_opa(english_square, LV_OPA_100, 0);
-  lv_obj_set_style_text_color(simplified_chinese_selection_text,
-                              lv_color_hex(0xFFFFFF), 0);
-  lv_obj_set_style_text_color(traditional_chinese_selection_text,
-                              lv_color_hex(0xFFFFFF), 0);
-  lv_obj_set_style_text_color(english_selection_text, lv_color_hex(0xFFFFFF),
-                              0);
-  // 设置被点击方形的边框透明度为0
-  lv_obj_set_style_border_opa(obj, LV_OPA_100, 0);
-  lv_obj_set_style_bg_opa(obj, LV_OPA_0, 0);
-  // 根据点击的方形设置对应的文字颜色
-  if (obj == simplified_chinese_square) {
-    lv_obj_set_style_text_color(simplified_chinese_selection_text,
-                                lv_color_hex(0xE9BD86), 0);
-  } else if (obj == traditional_chinese_square) {
-    lv_obj_set_style_text_color(traditional_chinese_selection_text,
-                                lv_color_hex(0xE9BD86), 0);
-  } else if (obj == english_square) {
-    lv_obj_set_style_text_color(english_selection_text, lv_color_hex(0xE9BD86),
-                                0);
+  
+  for (int i = 0; i < 3; i++) {
+    lv_obj_set_style_border_opa(lang_options[i].square, LV_OPA_0, 0);
+    lv_obj_set_style_bg_opa(lang_options[i].square, LV_OPA_100, 0);
+    lv_obj_set_style_text_color(lang_options[i].label, lv_color_hex(0xFFFFFF), 0);
+    
+    if (obj == lang_options[i].square) {
+      lv_obj_set_style_border_opa(obj, LV_OPA_100, 0);
+      lv_obj_set_style_bg_opa(obj, LV_OPA_0, 0);
+      lv_obj_set_style_text_color(lang_options[i].label, lv_color_hex(0xE9BD86), 0);
+    }
   }
 }
 
-void lan_sel_view_init(void) {
+lv_obj_t* lan_sel_view_init(void) {
   lan_sel_view = lv_obj_create(NULL);
   lv_obj_set_size(lan_sel_view, 1280, 480);
   lv_obj_set_style_bg_color(lan_sel_view, lv_color_hex(0x000000), 0);
@@ -68,88 +55,54 @@ void lan_sel_view_init(void) {
                               0);  // 添加文字居中对齐
   lv_obj_align(lan_sel_text, LV_ALIGN_CENTER, 0, -191);
 
-  simplified_chinese_square = lv_obj_create(lan_sel_view);
-  lv_obj_set_size(simplified_chinese_square, 130, 130);  // 设置方形大小
-  lv_obj_set_style_radius(simplified_chinese_square, 0,
-                          0);  // 设置倒角的半径为0像素
-  lv_obj_set_style_border_width(simplified_chinese_square, 1,
-                                0);  // 设置边框的宽度为1像素
-  lv_obj_set_style_bg_color(simplified_chinese_square, lv_color_hex(0x121212),
-                            0);  // 设置方形的背景颜色为深灰色
-  lv_obj_set_style_bg_opa(simplified_chinese_square, LV_OPA_0, 0);
-  lv_obj_set_style_border_color(simplified_chinese_square,
-                                lv_color_hex(0xE9BD86), 0);
-  // lv_obj_set_style_border_opa(simplified_chinese_square, LV_OPA_0, 0);
-  lv_obj_align(simplified_chinese_square, LV_ALIGN_CENTER, -215,
-               0);  // 方形位置
-  // 为每个方形添加点击事件
-  lv_obj_add_event_cb(simplified_chinese_square, square_click_event,
-                      LV_EVENT_CLICKED, NULL);
+  // 初始化样式
+  static lv_style_t base_style;
+  static lv_style_t label_style;
+  lv_style_init(&base_style);
+  lv_style_set_radius(&base_style, 0);
+  lv_style_set_border_width(&base_style, 1);
+  lv_style_set_bg_color(&base_style, lv_color_hex(0x121212));
+  lv_style_set_bg_opa(&base_style, LV_OPA_0);
+  lv_style_set_border_color(&base_style, lv_color_hex(0xE9BD86));
 
-  simplified_chinese_selection_text = lv_label_create(lan_sel_view);
-  lv_label_set_text(simplified_chinese_selection_text, "简体中文");
-  lv_obj_set_style_text_color(simplified_chinese_selection_text,
-                              lv_color_hex(0xE9BD86), 0);
-  lv_obj_set_style_text_font(simplified_chinese_selection_text,
-                             &HarmonyOS_Sans_SC_Regular_26, 0);
-  lv_obj_set_width(simplified_chinese_selection_text, 120);  // 设置标签宽度
-  lv_obj_set_style_text_align(simplified_chinese_selection_text,
-                              LV_TEXT_ALIGN_CENTER,
-                              0);  // 添加文字居中对齐
-  lv_obj_align(simplified_chinese_selection_text, LV_ALIGN_CENTER, -215, 0);
-
-  traditional_chinese_square = lv_obj_create(lan_sel_view);
-  lv_obj_set_size(traditional_chinese_square, 130, 130);  // 设置方形大小
-  lv_obj_set_style_radius(traditional_chinese_square, 0,
-                          0);  // 设置倒角的半径为0像素
-  lv_obj_set_style_border_width(traditional_chinese_square, 1,
-                                0);  // 设置边框的宽度为1像素
-  lv_obj_set_style_bg_color(traditional_chinese_square, lv_color_hex(0x121212),
-                            0);  // 设置方形的背景颜色为深灰色
-  lv_obj_set_style_border_color(traditional_chinese_square,
-                                lv_color_hex(0xE9BD86), 0);
-  lv_obj_set_style_border_opa(traditional_chinese_square, LV_OPA_0, 0);
-  lv_obj_align(traditional_chinese_square, LV_ALIGN_CENTER, 0, 0);  // 方形位置
-  // 为每个方形添加点击事件
-  lv_obj_add_event_cb(traditional_chinese_square, square_click_event,
-                      LV_EVENT_CLICKED, NULL);
-
-  traditional_chinese_selection_text = lv_label_create(lan_sel_view);
-  lv_label_set_text(traditional_chinese_selection_text, "繁體中文");
-  lv_obj_set_style_text_color(traditional_chinese_selection_text,
-                              lv_color_hex(0xFFFFFF), 0);
-  lv_obj_set_style_text_font(traditional_chinese_selection_text,
-                             &HarmonyOS_Sans_SC_Regular_26, 0);
-  lv_obj_set_width(traditional_chinese_selection_text, 120);  // 设置标签宽度
-  lv_obj_set_style_text_align(traditional_chinese_selection_text,
-                              LV_TEXT_ALIGN_CENTER,
-                              0);  // 添加文字居中对齐
-  lv_obj_align(traditional_chinese_selection_text, LV_ALIGN_CENTER, 0, 0);
-
-  english_square = lv_obj_create(lan_sel_view);
-  lv_obj_set_size(english_square, 130, 130);      // 设置方形大小
-  lv_obj_set_style_radius(english_square, 0, 0);  // 设置倒角的半径为0像素
-  lv_obj_set_style_border_width(english_square, 1, 0);  // 设置边框的宽度为1像素
-  lv_obj_set_style_bg_color(english_square, lv_color_hex(0x121212),
-                            0);  // 设置方形的背景颜色为深灰色
-  lv_obj_set_style_border_color(english_square, lv_color_hex(0xE9BD86), 0);
-  lv_obj_set_style_border_opa(english_square, LV_OPA_0, 0);
-  lv_obj_align(english_square, LV_ALIGN_CENTER, 215, 0);  // 方形位置
-  // 为每个方形添加点击事件
-  lv_obj_add_event_cb(english_square, square_click_event, LV_EVENT_CLICKED,
-                      NULL);
-
-  english_selection_text = lv_label_create(lan_sel_view);
-  lv_label_set_text(english_selection_text, "English");
-  lv_obj_set_style_text_color(english_selection_text, lv_color_hex(0xFFFFFF),
-                              0);
-  lv_obj_set_style_text_font(english_selection_text,
-                             &HarmonyOS_Sans_SC_Regular_26, 0);
-  lv_obj_set_width(english_selection_text, 120);  // 设置标签宽度
-  lv_obj_set_style_text_align(english_selection_text, LV_TEXT_ALIGN_CENTER,
-                              0);  // 添加文字居中对齐
-  lv_obj_align(english_selection_text, LV_ALIGN_CENTER, 215, 0);
-  // 创建一个“确定”按钮
+  lv_style_init(&label_style);
+  lv_style_set_text_font(&label_style, &HarmonyOS_Sans_SC_Regular_26);
+  lv_style_set_width(&label_style, 120);
+  lv_style_set_text_align(&label_style, LV_TEXT_ALIGN_CENTER);
+  // 语言选项配置
+  const struct {
+    const char* text;
+    int32_t x_pos;
+  } lang_config[3] = {
+    {"简体中文", -215},
+    {"繁體中文", 0},
+    {"English", 215}
+  };
+  // 创建语言选项
+  for (int i = 0; i < 3; i++) {
+    // 创建方形
+    lang_options[i].square = lv_obj_create(lan_sel_view);
+    lv_obj_add_style(lang_options[i].square, &base_style, 0);
+    lv_obj_set_size(lang_options[i].square, 130, 130);
+    lv_obj_align(lang_options[i].square, LV_ALIGN_CENTER, lang_config[i].x_pos, 0);
+    lv_obj_add_event_cb(lang_options[i].square, square_click_event, LV_EVENT_CLICKED, NULL);
+  // 创建标签
+  lang_options[i].label = lv_label_create(lan_sel_view);
+  lv_label_set_text(lang_options[i].label, lang_config[i].text);
+  lv_obj_add_style(lang_options[i].label, &label_style, 0);
+  lv_obj_align(lang_options[i].label, LV_ALIGN_CENTER, lang_config[i].x_pos, 0);
+  
+  // 设置默认选中状态
+  if(i == 0) {
+      lv_obj_set_style_border_opa(lang_options[i].square, LV_OPA_100, 0);
+      lv_obj_set_style_text_color(lang_options[i].label, lv_color_hex(0xE9BD86), 0);
+  } else {
+      lv_obj_set_style_bg_opa(lang_options[i].square, LV_OPA_100, 0);
+      lv_obj_set_style_border_opa(lang_options[i].square, LV_OPA_0, 0);
+      lv_obj_set_style_text_color(lang_options[i].label, lv_color_hex(0xFFFFFF), 0);
+  }
+  }
+  // 创建确定按钮
   lan_sel_sure_btn = lv_btn_create(lan_sel_view);
   lv_obj_add_style(lan_sel_sure_btn, &button_style, 0);
   lv_obj_align(lan_sel_sure_btn, LV_ALIGN_CENTER, 0, 182);  // 设置按钮位置
@@ -160,4 +113,5 @@ void lan_sel_view_init(void) {
   lv_obj_set_style_text_color(sure_btn_label, lv_color_hex(0xE9BD86), 0);
   lv_obj_set_style_text_align(sure_btn_label, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_align(sure_btn_label, LV_ALIGN_CENTER, 0, 1);
+  return lan_sel_view;
 }
