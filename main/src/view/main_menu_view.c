@@ -71,7 +71,6 @@ static void func_label_click_event(lv_event_t* e) {
   lv_obj_t* label_obj = lv_event_get_target(e);
   // 获取用户数据
   int index = (int)lv_event_get_user_data(e);
-  // printf("index = %d\n", index);
   switch (index) {
     case 0:
       navigate_to_view("child_lock_view");
@@ -140,9 +139,6 @@ static void build_label_method(const char* img_path, const char* text,
 
 static void coffee_options_method(const char* icon_path, const char* icon_text,
                                   int index) {
-  // lv_obj_add_event_cb(sliding_panel, func_label_click_event,
-  // LV_EVENT_CLICKED,
-  //                     (void*)index);  // 注册点击事件回调函数
   // 创建一个内小面板对象
   lv_obj_t* sliding_inside_panel = lv_obj_create(sliding_panel);
   // 禁用 sliding_inside_panel 的滚动
@@ -223,9 +219,9 @@ lv_obj_t* main_menu_view_init(void) {
   lv_obj_set_style_pad_left(sliding_panel, 25, 0);
   // 设置右边距为 25px
   lv_obj_set_style_pad_right(sliding_panel, 25, 0);
-  // 设置上边距为 25px
+  // 设置上边距为 0px
   lv_obj_set_style_pad_top(sliding_panel, 0, 0);
-  // 设置下边距为 25px
+  // 设置下边距为 0px
   lv_obj_set_style_pad_bottom(sliding_panel, 0, 0);
   // 启用水平滚动对齐
   // lv_obj_set_scroll_snap_x(sliding_panel, LV_SCROLL_SNAP_START);
@@ -233,9 +229,6 @@ lv_obj_t* main_menu_view_init(void) {
   // 添加滑动结束事件回调
   lv_obj_add_event_cb(sliding_panel, sliding_panel_scroll_end_event,
                       LV_EVENT_SCROLL_END, NULL);
-  // lv_obj_set_scroll_snap_x(sliding_panel, LV_SCROLL_SNAP_END);
-  // lv_obj_scroll_to_x(sliding_panel, 25, LV_ANIM_OFF);
-
   lv_obj_add_flag(sliding_panel,
                   LV_OBJ_FLAG_CLICKABLE);  // 确保能点击到，不然点不到文字()
 

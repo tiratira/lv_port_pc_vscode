@@ -9,5 +9,5 @@ void ui_app_init(void) {
   ui_style_init();
   init_routes();
 
-  navigate_to_view("lan_sel_view");
+  navigate_to_view("user_label_view");
 }
