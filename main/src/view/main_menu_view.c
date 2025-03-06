@@ -22,12 +22,19 @@ lv_obj_t* img_wifi_icon = 0;
 lv_obj_t* main_menu_hot_water_text = 0;
 lv_obj_t* main_menu_cold_water_text = 0;
 lv_obj_t* sliding_panel = 0;
-
+lv_obj_t* hot_drink_items[8] = {0};   // 存储热饮项对象指针
+lv_obj_t* cold_drink_items[6] = {0};  // 存储冷饮项对象指针
+bool current_is_hot = true;           // 当前显示状态是否为热饮
 // 声明外部变量
 extern lv_obj_t* screen_saver_view;
 extern void screen_saver_view_init(void);
 extern lv_obj_t* user_label_view;
 extern lv_obj_t* child_lock_view;
+
+static lv_obj_t* hot_drink_options_method(const char* icon_path,
+                                          const char* icon_text, int index);
+static lv_obj_t* cold_drink_options_method(const char* icon_path,
+                                           const char* icon_text, int index);
 
 const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("main_menu_images/img_lock_screen_label_icon.png"),
@@ -50,15 +57,38 @@ const char* hot_drink_icon_list[] = {
 };
 
 const char* cold_drink_icon_list[] = {
-  LVGL_IMAGE_PATH("main_menu_images/iced_americano_icon.png"),
-  LVGL_IMAGE_PATH("main_menu_images/iced_latte_icon.png"),
-  LVGL_IMAGE_PATH("main_menu_images/iced_cappuccino_icon.png"),
-  LVGL_IMAGE_PATH("main_menu_images/cold_brew_coffee_icon.png"),
-  LVGL_IMAGE_PATH("main_menu_images/cold_brew_latte_icon.png"),
-  LVGL_IMAGE_PATH("main_menu_images/cold_brew_cappuccino_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/iced_americano_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/iced_latte_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/iced_cappuccino_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/cold_brew_coffee_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/cold_brew_latte_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/cold_brew_cappuccino_icon.png"),
 
 };
 
+const char* hot_drink_names[] = {
+  "意式浓缩", "美式咖啡", "拿铁咖啡", "卡布奇诺", 
+  "玛奇雅朵", "芮斯崔朵", "现磨咖啡", "拿铁玛奇朵"
+};
+
+const char* cold_drink_names[] = {
+  "冰美式", "冰拿铁", "冰卡布", 
+  "冷萃咖啡", "冷萃拿铁", "冷萃卡布"
+};
+// 新增创建函数（放在原有函数下方）
+static void create_hot_drinks() {
+  for (int i = 0; i < 8; i++) {
+    hot_drink_items[i] = hot_drink_options_method(hot_drink_icon_list[i],
+      hot_drink_names[i], i);
+  }
+}
+
+static void create_cold_drinks() {
+  for (int i = 0; i < 6; i++) {
+    cold_drink_items[i] = cold_drink_options_method(cold_drink_icon_list[i],
+      cold_drink_names[i], i);
+  }
+}
 static void h_or_c_text_click_event(lv_event_t* e) {
   lv_obj_t* obj = lv_event_get_target(e);
   // 重置文本颜色
@@ -74,6 +104,34 @@ static void h_or_c_text_click_event(lv_event_t* e) {
     lv_obj_set_style_text_color(main_menu_cold_water_text,
                                 lv_color_hex(0xE9BD85), 0);
   }
+  if (obj == main_menu_hot_water_text) {
+    // 删除冷饮项并创建热饮项
+    if (!current_is_hot) {
+      for (int i = 0; i < 6; i++) {
+        if (cold_drink_items[i]) {
+          lv_obj_delete(cold_drink_items[i]);
+          cold_drink_items[i] = NULL;
+        }
+      }
+      create_hot_drinks();
+      current_is_hot = true;
+    }
+  } else if (obj == main_menu_cold_water_text) {
+    // 删除热饮项并创建冷饮项
+    if (current_is_hot) {
+      for (int i = 0; i < 8; i++) {
+        if (hot_drink_items[i]) {
+          lv_obj_delete(hot_drink_items[i]);
+          hot_drink_items[i] = NULL;
+        }
+      }
+      create_cold_drinks();
+      current_is_hot = false;
+    }
+  }
+
+  // 重置滚动位置
+  lv_obj_scroll_to_x(sliding_panel, 0, LV_ANIM_OFF);
 }
 
 // 定义返回按钮的点击事件回调函数
@@ -147,7 +205,7 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_add_flag(label, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
 }
 
-static void hot_drink_options_method(const char* icon_path,
+static lv_obj_t* hot_drink_options_method(const char* icon_path,
                                      const char* icon_text, int index) {
   // 创建一个内小面板对象
   lv_obj_t* sliding_inside_panel = lv_obj_create(sliding_panel);
@@ -177,6 +235,42 @@ static void hot_drink_options_method(const char* icon_path,
   lv_obj_align(sliding_inside_text, LV_ALIGN_CENTER, 0, 135);
   lv_obj_add_flag(sliding_inside_text,
                   LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
+
+  return sliding_inside_panel;
+}
+
+static lv_obj_t* cold_drink_options_method(const char* icon_path,
+                                      const char* icon_text, int index) {
+  // 创建一个内小面板对象
+  lv_obj_t* sliding_inside_panel = lv_obj_create(sliding_panel);
+  // 禁用 sliding_inside_panel 的滚动
+  lv_obj_set_scroll_dir(sliding_inside_panel, LV_DIR_NONE);
+  lv_obj_set_size(sliding_inside_panel, 230, 304);
+  lv_obj_set_style_bg_color(sliding_inside_panel, lv_color_hex(0x000000), 0);
+  lv_obj_set_style_bg_opa(sliding_inside_panel, LV_OPA_0, 0);
+  lv_obj_set_style_radius(sliding_inside_panel, 0, 0);  // 设置倒角的半径为0像素
+  lv_obj_set_style_border_width(sliding_inside_panel, 0,
+                                0);  // 设置边框的宽度为0像素
+  lv_obj_add_flag(sliding_inside_panel,
+                  LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
+
+  lv_obj_t* img = lv_image_create(sliding_inside_panel);
+  lv_image_set_src(img, icon_path);
+  lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
+  // img居中
+  lv_obj_align(img, LV_ALIGN_CENTER, 0, -22);
+
+  lv_obj_t* sliding_inside_text = lv_label_create(sliding_inside_panel);
+  lv_label_set_text(sliding_inside_text, icon_text);
+  lv_obj_set_style_text_color(sliding_inside_text, lv_color_hex(0xFFFFFF), 0);
+  lv_obj_set_style_text_font(sliding_inside_text, &HarmonyOS_Sans_SC_Regular_26,
+                             0);
+  // 居中对齐
+  lv_obj_align(sliding_inside_text, LV_ALIGN_CENTER, 0, 135);
+  lv_obj_add_flag(sliding_inside_text,
+                  LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
+
+  return sliding_inside_panel;
 }
 
 // 添加滑动结束事件处理函数
@@ -232,21 +326,30 @@ lv_obj_t* main_menu_view_init(void) {
   // 设置上边距为 0px
   lv_obj_set_style_pad_top(sliding_panel, 0, 0);
   // 设置下边距为 0px
-  lv_obj_set_style_pad_bottom(sliding_panel, 0, 0);  
+  lv_obj_set_style_pad_bottom(sliding_panel, 0, 0);
   // 添加滑动结束事件回调
   lv_obj_add_event_cb(sliding_panel, hot_drink_sliding_panel_scroll_end_event,
                       LV_EVENT_SCROLL_END, NULL);
   lv_obj_add_flag(sliding_panel,
                   LV_OBJ_FLAG_CLICKABLE);  // 确保能点击到，不然点不到文字()
 
-  hot_drink_options_method(hot_drink_icon_list[0], "意式浓缩", 0);
-  hot_drink_options_method(hot_drink_icon_list[1], "美式咖啡", 1);
-  hot_drink_options_method(hot_drink_icon_list[2], "拿铁咖啡", 2);
-  hot_drink_options_method(hot_drink_icon_list[3], "卡布奇诺", 3);
-  hot_drink_options_method(hot_drink_icon_list[4], "玛奇雅朵", 4);
-  hot_drink_options_method(hot_drink_icon_list[5], "芮斯崔朵", 5);
-  hot_drink_options_method(hot_drink_icon_list[6], "现磨咖啡", 6);
-  hot_drink_options_method(hot_drink_icon_list[7], "拿铁玛奇朵", 7);
+  create_hot_drinks();
+
+  // hot_drink_options_method(hot_drink_icon_list[0], "意式浓缩", 0);
+  // hot_drink_options_method(hot_drink_icon_list[1], "美式咖啡", 1);
+  // hot_drink_options_method(hot_drink_icon_list[2], "拿铁咖啡", 2);
+  // hot_drink_options_method(hot_drink_icon_list[3], "卡布奇诺", 3);
+  // hot_drink_options_method(hot_drink_icon_list[4], "玛奇雅朵", 4);
+  // hot_drink_options_method(hot_drink_icon_list[5], "芮斯崔朵", 5);
+  // hot_drink_options_method(hot_drink_icon_list[6], "现磨咖啡", 6);
+  // hot_drink_options_method(hot_drink_icon_list[7], "拿铁玛奇朵", 7);
+
+  // cold_drink_options_method(cold_drink_icon_list[0], "冰美式", 0);
+  // cold_drink_options_method(cold_drink_icon_list[1], "冰拿铁", 1);
+  // cold_drink_options_method(cold_drink_icon_list[2], "冰卡布", 2);
+  // cold_drink_options_method(cold_drink_icon_list[3], "冷萃咖啡", 3);
+  // cold_drink_options_method(cold_drink_icon_list[4], "冷萃拿铁", 4);
+  // cold_drink_options_method(cold_drink_icon_list[5], "冷萃卡布", 5);
 
   main_menu_hot_water_text = lv_label_create(main_menu_view);
   lv_label_set_text(main_menu_hot_water_text, "热饮");
