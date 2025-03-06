@@ -37,15 +37,25 @@ const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("main_menu_images/img_quick_cooked_rinse_label_icon.png"),
 };
 
-const char* coffee_icon_list[] = {
-    LVGL_IMAGE_PATH("main_menu_images/expresso_icon_1.png"),
-    LVGL_IMAGE_PATH("main_menu_images/americano_icon_2.png"),
-    LVGL_IMAGE_PATH("main_menu_images/latte_icon_3.png"),
-    LVGL_IMAGE_PATH("main_menu_images/cappuccino_icon_4.png"),
-    LVGL_IMAGE_PATH("main_menu_images/macchiato_icon_5.png"),
-    LVGL_IMAGE_PATH("main_menu_images/ristretto_icon_6.png"),
-    LVGL_IMAGE_PATH("main_menu_images/fresh_ground_coffee_icon_7.png"),
-    LVGL_IMAGE_PATH("main_menu_images/latte_macchiato_icon_8.png"),
+const char* hot_drink_icon_list[] = {
+    LVGL_IMAGE_PATH("main_menu_images/expresso_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/americano_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/latte_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/cappuccino_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/macchiato_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/ristretto_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/fresh_ground_coffee_icon.png"),
+    LVGL_IMAGE_PATH("main_menu_images/latte_macchiato_icon.png"),
+
+};
+
+const char* cold_drink_icon_list[] = {
+  LVGL_IMAGE_PATH("main_menu_images/iced_americano_icon.png"),
+  LVGL_IMAGE_PATH("main_menu_images/iced_latte_icon.png"),
+  LVGL_IMAGE_PATH("main_menu_images/iced_cappuccino_icon.png"),
+  LVGL_IMAGE_PATH("main_menu_images/cold_brew_coffee_icon.png"),
+  LVGL_IMAGE_PATH("main_menu_images/cold_brew_latte_icon.png"),
+  LVGL_IMAGE_PATH("main_menu_images/cold_brew_cappuccino_icon.png"),
 
 };
 
@@ -137,8 +147,8 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_add_flag(label, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
 }
 
-static void coffee_options_method(const char* icon_path, const char* icon_text,
-                                  int index) {
+static void hot_drink_options_method(const char* icon_path,
+                                     const char* icon_text, int index) {
   // 创建一个内小面板对象
   lv_obj_t* sliding_inside_panel = lv_obj_create(sliding_panel);
   // 禁用 sliding_inside_panel 的滚动
@@ -170,7 +180,7 @@ static void coffee_options_method(const char* icon_path, const char* icon_text,
 }
 
 // 添加滑动结束事件处理函数
-static void sliding_panel_scroll_end_event(lv_event_t* e) {
+static void hot_drink_sliding_panel_scroll_end_event(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_coord_t scroll_x = lv_obj_get_scroll_x(panel);
   lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);  // 获取左侧滚动区域
@@ -222,24 +232,21 @@ lv_obj_t* main_menu_view_init(void) {
   // 设置上边距为 0px
   lv_obj_set_style_pad_top(sliding_panel, 0, 0);
   // 设置下边距为 0px
-  lv_obj_set_style_pad_bottom(sliding_panel, 0, 0);
-  // 启用水平滚动对齐
-  // lv_obj_set_scroll_snap_x(sliding_panel, LV_SCROLL_SNAP_START);
-  // lv_obj_scroll_to_x(sliding_panel, -25, LV_ANIM_OFF);
+  lv_obj_set_style_pad_bottom(sliding_panel, 0, 0);  
   // 添加滑动结束事件回调
-  lv_obj_add_event_cb(sliding_panel, sliding_panel_scroll_end_event,
+  lv_obj_add_event_cb(sliding_panel, hot_drink_sliding_panel_scroll_end_event,
                       LV_EVENT_SCROLL_END, NULL);
   lv_obj_add_flag(sliding_panel,
                   LV_OBJ_FLAG_CLICKABLE);  // 确保能点击到，不然点不到文字()
 
-  coffee_options_method(coffee_icon_list[0], "意式浓缩", 0);
-  coffee_options_method(coffee_icon_list[1], "美式咖啡", 1);
-  coffee_options_method(coffee_icon_list[2], "拿铁咖啡", 2);
-  coffee_options_method(coffee_icon_list[3], "卡布奇诺", 3);
-  coffee_options_method(coffee_icon_list[4], "玛奇雅朵", 4);
-  coffee_options_method(coffee_icon_list[5], "芮斯崔朵", 5);
-  coffee_options_method(coffee_icon_list[6], "现磨咖啡", 6);
-  coffee_options_method(coffee_icon_list[7], "拿铁玛奇朵", 7);
+  hot_drink_options_method(hot_drink_icon_list[0], "意式浓缩", 0);
+  hot_drink_options_method(hot_drink_icon_list[1], "美式咖啡", 1);
+  hot_drink_options_method(hot_drink_icon_list[2], "拿铁咖啡", 2);
+  hot_drink_options_method(hot_drink_icon_list[3], "卡布奇诺", 3);
+  hot_drink_options_method(hot_drink_icon_list[4], "玛奇雅朵", 4);
+  hot_drink_options_method(hot_drink_icon_list[5], "芮斯崔朵", 5);
+  hot_drink_options_method(hot_drink_icon_list[6], "现磨咖啡", 6);
+  hot_drink_options_method(hot_drink_icon_list[7], "拿铁玛奇朵", 7);
 
   main_menu_hot_water_text = lv_label_create(main_menu_view);
   lv_label_set_text(main_menu_hot_water_text, "热饮");
