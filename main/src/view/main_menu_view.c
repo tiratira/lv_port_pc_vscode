@@ -22,9 +22,8 @@ lv_obj_t* img_wifi_icon = 0;
 lv_obj_t* main_menu_hot_water_text = 0;
 lv_obj_t* main_menu_cold_water_text = 0;
 lv_obj_t* sliding_panel = 0;
-lv_obj_t* hot_drink_items[8] = {0};   // 存储热饮项对象指针
-lv_obj_t* cold_drink_items[6] = {0};  // 存储冷饮项对象指针
-bool current_is_hot = true;           // 当前显示状态是否为热饮
+bool current_is_hot = true;  // 当前显示状态是否为热饮
+
 // 声明外部变量
 extern lv_obj_t* screen_saver_view;
 extern void screen_saver_view_init(void);
@@ -36,6 +35,47 @@ static lv_obj_t* hot_drink_options_method(const char* icon_path,
 static lv_obj_t* cold_drink_options_method(const char* icon_path,
                                            const char* icon_text, int index);
 
+typedef enum drink_type {
+  HOT_DRINK,
+  COLD_DRINK,
+} drink_type_t;
+
+typedef struct drink_item_data {
+  const char* icon_path;
+  const char* icon_text;
+  drink_type_t type;
+} drink_item_data_t;
+
+const drink_item_data_t drink_item_data[] = {
+    {LVGL_IMAGE_PATH("main_menu_images/expresso_icon.png"), "意式浓缩",
+     HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/americano_icon.png"), "美式咖啡",
+     HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/latte_icon.png"), "拿铁咖啡", HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/cappuccino_icon.png"), "卡布奇诺",
+     HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/macchiato_icon.png"), "玛奇雅朵",
+     HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/ristretto_icon.png"), "芮斯崔朵",
+     HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/fresh_ground_coffee_icon.png"),
+     "现磨咖啡", HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/latte_macchiato_icon.png"), "拿铁玛奇朵",
+     HOT_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/iced_americano_icon.png"), "冰美式",
+     COLD_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/iced_latte_icon.png"), "冰拿铁",
+     COLD_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/iced_cappuccino_icon.png"), "冰卡布",
+     COLD_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/cold_brew_coffee_icon.png"), "冷萃咖啡",
+     COLD_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/cold_brew_latte_icon.png"), "冷萃拿铁",
+     COLD_DRINK},
+    {LVGL_IMAGE_PATH("main_menu_images/cold_brew_cappuccino_icon.png"),
+     "冷萃卡布", COLD_DRINK},
+};
+
 const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("main_menu_images/img_lock_screen_label_icon.png"),
     LVGL_IMAGE_PATH("main_menu_images/img_user_label_icon.png"),
@@ -44,51 +84,27 @@ const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("main_menu_images/img_quick_cooked_rinse_label_icon.png"),
 };
 
-const char* hot_drink_icon_list[] = {
-    LVGL_IMAGE_PATH("main_menu_images/expresso_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/americano_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/latte_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/cappuccino_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/macchiato_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/ristretto_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/fresh_ground_coffee_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/latte_macchiato_icon.png"),
-
-};
-
-const char* cold_drink_icon_list[] = {
-    LVGL_IMAGE_PATH("main_menu_images/iced_americano_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/iced_latte_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/iced_cappuccino_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/cold_brew_coffee_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/cold_brew_latte_icon.png"),
-    LVGL_IMAGE_PATH("main_menu_images/cold_brew_cappuccino_icon.png"),
-
-};
-
-const char* hot_drink_names[] = {
-  "意式浓缩", "美式咖啡", "拿铁咖啡", "卡布奇诺", 
-  "玛奇雅朵", "芮斯崔朵", "现磨咖啡", "拿铁玛奇朵"
-};
-
-const char* cold_drink_names[] = {
-  "冰美式", "冰拿铁", "冰卡布", 
-  "冷萃咖啡", "冷萃拿铁", "冷萃卡布"
-};
 // 新增创建函数（放在原有函数下方）
 static void create_hot_drinks() {
-  for (int i = 0; i < 8; i++) {
-    hot_drink_items[i] = hot_drink_options_method(hot_drink_icon_list[i],
-      hot_drink_names[i], i);
+  for (int i = 0; i < sizeof(drink_item_data) / sizeof(drink_item_data[0]);
+       i++) {
+    if (drink_item_data[i].type == HOT_DRINK) {
+      hot_drink_options_method(drink_item_data[i].icon_path,
+                               drink_item_data[i].icon_text, i);
+    }
   }
 }
 
 static void create_cold_drinks() {
-  for (int i = 0; i < 6; i++) {
-    cold_drink_items[i] = cold_drink_options_method(cold_drink_icon_list[i],
-      cold_drink_names[i], i);
+  for (int i = 0; i < sizeof(drink_item_data) / sizeof(drink_item_data[0]);
+       i++) {
+    if (drink_item_data[i].type == COLD_DRINK) {
+      cold_drink_options_method(drink_item_data[i].icon_path,
+                                drink_item_data[i].icon_text, i);
+    }
   }
 }
+
 static void h_or_c_text_click_event(lv_event_t* e) {
   lv_obj_t* obj = lv_event_get_target(e);
   // 重置文本颜色
@@ -107,24 +123,16 @@ static void h_or_c_text_click_event(lv_event_t* e) {
   if (obj == main_menu_hot_water_text) {
     // 删除冷饮项并创建热饮项
     if (!current_is_hot) {
-      for (int i = 0; i < 6; i++) {
-        if (cold_drink_items[i]) {
-          lv_obj_delete(cold_drink_items[i]);
-          cold_drink_items[i] = NULL;
-        }
-      }
+      // 删除所有子对象
+      lv_obj_clean(sliding_panel);
       create_hot_drinks();
       current_is_hot = true;
     }
   } else if (obj == main_menu_cold_water_text) {
     // 删除热饮项并创建冷饮项
     if (current_is_hot) {
-      for (int i = 0; i < 8; i++) {
-        if (hot_drink_items[i]) {
-          lv_obj_delete(hot_drink_items[i]);
-          hot_drink_items[i] = NULL;
-        }
-      }
+      // 删除所有子对象
+      lv_obj_clean(sliding_panel);
       create_cold_drinks();
       current_is_hot = false;
     }
@@ -145,6 +153,9 @@ static void func_label_click_event(lv_event_t* e) {
       break;
     case 1:
       navigate_to_view("user_label_view");
+      break;
+    case 2:
+      navigate_to_view("coffee_making_view");
       break;
     default:
       break;
@@ -206,7 +217,7 @@ static void build_label_method(const char* img_path, const char* text,
 }
 
 static lv_obj_t* hot_drink_options_method(const char* icon_path,
-                                     const char* icon_text, int index) {
+                                          const char* icon_text, int index) {
   // 创建一个内小面板对象
   lv_obj_t* sliding_inside_panel = lv_obj_create(sliding_panel);
   // 禁用 sliding_inside_panel 的滚动
@@ -240,7 +251,7 @@ static lv_obj_t* hot_drink_options_method(const char* icon_path,
 }
 
 static lv_obj_t* cold_drink_options_method(const char* icon_path,
-                                      const char* icon_text, int index) {
+                                           const char* icon_text, int index) {
   // 创建一个内小面板对象
   lv_obj_t* sliding_inside_panel = lv_obj_create(sliding_panel);
   // 禁用 sliding_inside_panel 的滚动
@@ -274,7 +285,7 @@ static lv_obj_t* cold_drink_options_method(const char* icon_path,
 }
 
 // 添加滑动结束事件处理函数
-static void hot_drink_sliding_panel_scroll_end_event(lv_event_t* e) {
+static void sliding_panel_scroll_end_event(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_coord_t scroll_x = lv_obj_get_scroll_x(panel);
   lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);  // 获取左侧滚动区域
@@ -328,7 +339,7 @@ lv_obj_t* main_menu_view_init(void) {
   // 设置下边距为 0px
   lv_obj_set_style_pad_bottom(sliding_panel, 0, 0);
   // 添加滑动结束事件回调
-  lv_obj_add_event_cb(sliding_panel, hot_drink_sliding_panel_scroll_end_event,
+  lv_obj_add_event_cb(sliding_panel, sliding_panel_scroll_end_event,
                       LV_EVENT_SCROLL_END, NULL);
   lv_obj_add_flag(sliding_panel,
                   LV_OBJ_FLAG_CLICKABLE);  // 确保能点击到，不然点不到文字()

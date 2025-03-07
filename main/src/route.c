@@ -19,6 +19,7 @@ void init_routes() {
   DECLEAR_UI_VIEW(child_lock_view)
   DECLEAR_UI_VIEW(lan_sel_view)
   DECLEAR_UI_VIEW(user_label_view)
+  DECLEAR_UI_VIEW(coffee_making_view)
 
   // 添加view就放在下面
 }
