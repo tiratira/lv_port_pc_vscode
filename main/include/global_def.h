@@ -1,5 +1,5 @@
 #ifndef LVGL_STORAGE_PATH
-#ifdef WIN32
+#ifdef _WIN32
 #define LVGL_STORAGE_PATH "E:/Projects/lv_port_pc_vscode/main/assets"
 #elif __APPLE__
 #define LVGL_STORAGE_PATH \

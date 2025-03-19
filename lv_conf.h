@@ -933,7 +933,7 @@
 #define LV_USE_GENERIC_MIPI (LV_USE_ST7735 | LV_USE_ST7789 | LV_USE_ST7796 | LV_USE_ILI9341)
 
 /* LVGL Windows backend */
-#ifdef WIN32
+#ifdef _WIN32
 #define LV_USE_WINDOWS    1
 #else
 #define LV_USE_WINDOWS    0
