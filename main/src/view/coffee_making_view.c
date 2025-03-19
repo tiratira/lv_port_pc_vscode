@@ -1,3 +1,4 @@
+#include <src/core/lv_obj_pos.h>
 #include <src/misc/lv_area.h>
 #include "global_def.h"
 #include "lvgl.h"
@@ -28,6 +29,10 @@ const char* coffee_making_img_list[] = {
     LVGL_IMAGE_PATH("coffee_making_images/making_latte_icon.png"),
 };
 
+const char* paraset_switch_img_list[] = {
+    LVGL_IMAGE_PATH("coffee_making_images/img_switch_left.png"),
+    LVGL_IMAGE_PATH("coffee_making_images/img_switch_right.png"),
+};
 // 定义一个函数，用于设置当前咖啡的图片和文字
 // static void set_current_coffee(const char* coffee_name) {
 //   // 根据咖啡名称获取对应的图片路径
@@ -59,29 +64,35 @@ static lv_obj_t* parameter_settings_panel_method(const char* icon_path,
                                                  const char* icon_text,
                                                  int index) {
   // 创建内部参数调整面板
-  lv_obj_t* coffee_making_inside_panel =
+  lv_obj_t* coffee_making_paraset_panel =
       lv_obj_create(coffee_making_outside_panel);
   // 禁用 coffee_making_inside_panel 的滚动
-  lv_obj_set_scroll_dir(coffee_making_inside_panel, LV_DIR_NONE);
-  lv_obj_set_size(coffee_making_inside_panel, 230, 304);
-  lv_obj_set_style_bg_color(coffee_making_inside_panel, lv_color_hex(0xE9BD86),
+  lv_obj_set_scroll_dir(coffee_making_paraset_panel, LV_DIR_NONE);
+  lv_obj_set_size(coffee_making_paraset_panel, 820, 287);
+  lv_obj_set_pos(coffee_making_paraset_panel, 400, 45);
+  lv_obj_set_style_bg_color(coffee_making_paraset_panel, lv_color_hex(0xE9BD56),
                             0);
-  lv_obj_set_style_bg_opa(coffee_making_inside_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(coffee_making_inside_panel, 0,
+  lv_obj_set_style_bg_opa(coffee_making_paraset_panel, LV_OPA_50, 0);
+  lv_obj_set_style_radius(coffee_making_paraset_panel, 0,
                           0);  // 设置倒角的半径为0像素
-  lv_obj_set_style_border_width(coffee_making_inside_panel, 0,
+  lv_obj_set_style_border_width(coffee_making_paraset_panel, 0,
                                 0);  // 设置边框的宽度为0像素
-  lv_obj_add_flag(coffee_making_inside_panel,
+  lv_obj_add_flag(coffee_making_paraset_panel,
                   LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
 
-  //   lv_obj_t* img = lv_image_create(coffee_making_inside_panel);
+  lv_obj_t* paraset_switch_img = lv_image_create(coffee_making_outside_panel);
+  lv_image_set_src(paraset_switch_img, icon_path);
+  lv_obj_set_align(paraset_switch_img, LV_ALIGN_LEFT_MID);
+  lv_obj_add_flag(paraset_switch_img,
+                  LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
+  //   lv_obj_t* img = lv_image_create(coffee_making_paraset_panel);
   //   lv_image_set_src(img, icon_path);
   //   lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
   //   // img居中
   //   lv_obj_align(img, LV_ALIGN_CENTER, 0, -22);
 
   //   lv_obj_t* sliding_inside_text =
-  //   lv_label_create(coffee_making_inside_panel);
+  //   lv_label_create(coffee_making_paraset_panel);
   //   lv_label_set_text(sliding_inside_text, icon_text);
   //   lv_obj_set_style_text_color(sliding_inside_text, lv_color_hex(0xFFFFFF),
   //   0); lv_obj_set_style_text_font(sliding_inside_text,
@@ -103,14 +114,21 @@ static lv_obj_t* coffee_making_img_name_panel_method(const char* icon_path,
       lv_obj_create(coffee_making_outside_panel);
   // 禁用 coffee_making_img_panel 的滚动
   lv_obj_set_scroll_dir(coffee_making_img_panel, LV_DIR_NONE);
-  lv_obj_set_size(coffee_making_img_panel, 230, 304);
+  lv_obj_set_size(coffee_making_img_panel, 360, 371);
+  lv_obj_set_pos(coffee_making_img_panel, 40, 0);
   lv_obj_set_style_bg_color(coffee_making_img_panel, lv_color_hex(0xE9BD86), 0);
-  lv_obj_set_style_bg_opa(coffee_making_img_panel, LV_OPA_0, 0);
+  lv_obj_set_style_bg_opa(coffee_making_img_panel, LV_OPA_50, 0);
   lv_obj_set_style_radius(coffee_making_img_panel, 0,
                           0);  // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(coffee_making_img_panel, 0,
                                 0);  // 设置边框的宽度为0像素
   lv_obj_add_flag(coffee_making_img_panel,
+                  LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
+
+  lv_obj_t* coffee_icon = lv_image_create(coffee_making_img_panel);
+  lv_image_set_src(coffee_icon, icon_path);
+  lv_obj_set_pos(coffee_icon, 14, 6);
+  lv_obj_add_flag(coffee_icon,
                   LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
 
   lv_obj_t* coffee_making_name_text =
@@ -134,15 +152,16 @@ lv_obj_t* coffee_making_view_init(void) {
   lv_obj_set_style_bg_color(coffee_making_view, lv_color_hex(0x000000), 0);
 
   img_coffee_making_bg = lv_image_create(coffee_making_view);
-  lv_image_set_src(img_coffee_making_bg,
-                   LVGL_IMAGE_PATH("coffee_making_images/img_coffee_making_bg.png"));
+  lv_image_set_src(
+      img_coffee_making_bg,
+      LVGL_IMAGE_PATH("coffee_making_images/img_coffee_making_bg.png"));
   lv_obj_center(img_coffee_making_bg);
 
   // 创建制作页面外面板对象
   coffee_making_outside_panel = lv_obj_create(coffee_making_view);
   // 禁用 coffee_making_outside_panel 的滚动
   lv_obj_set_scroll_dir(coffee_making_outside_panel, LV_DIR_NONE);
-  lv_obj_set_size(coffee_making_outside_panel, 1280, 334);
+  lv_obj_set_size(coffee_making_outside_panel, 1280, 420);
   lv_obj_set_style_bg_color(coffee_making_outside_panel, lv_color_hex(0xFFFFFF),
                             0);
   lv_obj_set_style_bg_opa(coffee_making_outside_panel, LV_OPA_10, 0);
@@ -162,6 +181,12 @@ lv_obj_t* coffee_making_view_init(void) {
   lv_obj_set_style_pad_bottom(coffee_making_outside_panel, 0, 0);
   lv_obj_align(coffee_making_outside_panel, LV_ALIGN_TOP_MID, 0, 29);
   lv_obj_add_flag(coffee_making_outside_panel, LV_OBJ_FLAG_CLICKABLE);
+
+  // 创建制作页面内部板对象
+  coffee_making_img_name_panel_method(coffee_making_img_list[0], "美式咖啡");
+
+  parameter_settings_panel_method(
+      LVGL_IMAGE_PATH("coffee_making_images/making_water_icon.png"), "水量", 0);
 
   //   lv_obj_t* img = lv_image_create(sliding_inside_panel);
   //   lv_image_set_src(img, icon_path);
