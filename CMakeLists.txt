@@ -82,9 +82,24 @@ endif()
 
 # Conditionally include and link FFmpeg libraries if LV_USE_FFMPEG is enabled
 if(LV_USE_FFMPEG)
-    set(FFMPEG_DIR E:/Projects/ffmpeg-7.1-full_build-shared)
-    target_include_directories(lvgl PUBLIC ${FFMPEG_DIR}/include)
-    target_link_libraries(main ${FFMPEG_DIR}/lib/avformat.lib ${FFMPEG_DIR}/lib/avcodec.lib ${FFMPEG_DIR}/lib/avutil.lib ${FFMPEG_DIR}/lib/swscale.lib)
+    if(WIN32)
+        set(FFMPEG_DIR E:/Projects/ffmpeg-7.1-full_build-shared)
+        target_include_directories(lvgl PUBLIC ${FFMPEG_DIR}/include)
+        target_link_libraries(main ${FFMPEG_DIR}/lib/avformat.lib ${FFMPEG_DIR}/lib/avcodec.lib ${FFMPEG_DIR}/lib/avutil.lib ${FFMPEG_DIR}/lib/swscale.lib)
+    elseif(APPLE)
+        message(STATUS "Darwin")
+        set(FFMPEG_DIR /opt/homebrew/Cellar/ffmpeg/7.1.1_1)
+        target_include_directories(lvgl PUBLIC ${FFMPEG_DIR}/include)
+        find_library(AVCODEC_LIBRARY avcodec)
+        find_library(AVFORMAT_LIBRARY avformat)
+        find_library(AVUTIL_LIBRARY avutil)
+        find_library(AVDEVICE_LIBRARY avdevice)
+        find_library(SWSCALE_LIBRARY swscale)
+
+        target_link_libraries(main ${AVCODEC_LIBRARY} ${AVFORMAT_LIBRARY} ${AVUTIL_LIBRARY} ${AVDEVICE_LIBRARY} ${SWSCALE_LIBRARY})
+
+    elseif(APPLE)
+    endif()
 endif()
 
 # Conditionally include and link FreeType if LV_USE_FREETYPE is enabled
@@ -92,6 +107,10 @@ if(LV_USE_FREETYPE)
     find_package(Freetype REQUIRED)
     target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
     target_link_libraries(main ${FREETYPE_LIBRARIES})
+endif()
+
+if(NOT WIN32)
+    target_link_libraries(main ${SDL2_LIBRARIES})
 endif()
 
 # Apply additional compile options if the build type is Debug
