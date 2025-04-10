@@ -6,6 +6,7 @@
 #include <src/layouts/flex/lv_flex.h>
 #include <src/misc/lv_area.h>
 #include <src/misc/lv_event.h>
+#include "drink_type.h"
 #include "global_def.h"
 #include "lvgl.h"
 #include "ui_style.h"
@@ -35,46 +36,7 @@ static lv_obj_t* hot_drink_options_method(const char* icon_path,
 static lv_obj_t* cold_drink_options_method(const char* icon_path,
                                            const char* icon_text, int index);
 
-typedef enum drink_type {
-  HOT_DRINK,
-  COLD_DRINK,
-} drink_type_t;
-
-typedef struct drink_item_data {
-  const char* icon_path;
-  const char* icon_text;
-  drink_type_t type;
-} drink_item_data_t;
-
-const drink_item_data_t drink_item_data[] = {
-    {LVGL_IMAGE_PATH("main_menu_images/expresso_icon.png"), "意式浓缩",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/americano_icon.png"), "美式咖啡",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/latte_icon.png"), "拿铁咖啡", HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/cappuccino_icon.png"), "卡布奇诺",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/macchiato_icon.png"), "玛奇雅朵",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/ristretto_icon.png"), "芮斯崔朵",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/fresh_ground_coffee_icon.png"),
-     "现磨咖啡", HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/latte_macchiato_icon.png"), "拿铁玛奇朵",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/iced_americano_icon.png"), "冰美式",
-     COLD_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/iced_latte_icon.png"), "冰拿铁",
-     COLD_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/iced_cappuccino_icon.png"), "冰卡布",
-     COLD_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/cold_brew_coffee_icon.png"), "冷萃咖啡",
-     COLD_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/cold_brew_latte_icon.png"), "冷萃拿铁",
-     COLD_DRINK},
-    {LVGL_IMAGE_PATH("main_menu_images/cold_brew_cappuccino_icon.png"),
-     "冷萃卡布", COLD_DRINK},
-};
+extern drink_item_data_t* drink_item_data;
 
 const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("main_menu_images/img_lock_screen_label_icon.png"),
@@ -86,21 +48,19 @@ const char* main_menu_img_list[] = {
 
 // 新增创建函数（放在原有函数下方）
 static void create_hot_drinks() {
-  for (int i = 0; i < sizeof(drink_item_data) / sizeof(drink_item_data[0]);
-       i++) {
+  for (int i = 0; i < drink_count(); i++) {
     if (drink_item_data[i].type == HOT_DRINK) {
       hot_drink_options_method(drink_item_data[i].icon_path,
-                               drink_item_data[i].icon_text, i);
+                               drink_item_data[i].title_cn, i);
     }
   }
 }
 
 static void create_cold_drinks() {
-  for (int i = 0; i < sizeof(drink_item_data) / sizeof(drink_item_data[0]);
-       i++) {
+  for (int i = 0; i < drink_count(); i++) {
     if (drink_item_data[i].type == COLD_DRINK) {
       cold_drink_options_method(drink_item_data[i].icon_path,
-                                drink_item_data[i].icon_text, i);
+                                drink_item_data[i].title_cn, i);
     }
   }
 }
@@ -149,13 +109,13 @@ static void func_label_click_event(lv_event_t* e) {
   int index = (int)lv_event_get_user_data(e);
   switch (index) {
     case 0:
-      navigate_to_view("child_lock_view");
+      navigate_to_view("child_lock_view", NULL);
       break;
     case 1:
-      navigate_to_view("user_label_view");
+      navigate_to_view("user_label_view", NULL);
       break;
     case 2:
-      navigate_to_view("coffee_making_view");
+      navigate_to_view("coffee_making_view", NULL);
       break;
     default:
       break;
@@ -171,7 +131,7 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_set_pos(outside_panel, x, y);
   lv_obj_set_style_bg_color(outside_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(outside_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(outside_panel, 0, 0);  // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(outside_panel, 0, 0);        // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(outside_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(outside_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
@@ -188,7 +148,7 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_set_align(inside_panel, LV_ALIGN_CENTER);  // 居中对齐()
   lv_obj_set_style_bg_color(inside_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(inside_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(inside_panel, 0, 0);  // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(inside_panel, 0, 0);        // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(inside_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(inside_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
@@ -204,7 +164,7 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_set_size(mini_panel, 10, 64);
   lv_obj_set_style_bg_color(mini_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(mini_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(mini_panel, 0, 0);  // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(mini_panel, 0, 0);        // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(mini_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(mini_panel, LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
   lv_obj_add_flag(mini_panel, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
@@ -288,7 +248,7 @@ static lv_obj_t* cold_drink_options_method(const char* icon_path,
 static void sliding_panel_scroll_end_event(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_coord_t scroll_x = lv_obj_get_scroll_x(panel);
-  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);  // 获取左侧滚动区域
+  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);    // 获取左侧滚动区域
   lv_coord_t scroll_right = lv_obj_get_scroll_right(panel);  // 获取右侧滚动区域
   lv_coord_t panel_width = lv_obj_get_width(panel);
 
@@ -326,7 +286,7 @@ lv_obj_t* main_menu_view_init(void) {
   lv_obj_set_pos(sliding_panel, 0, 54);
   lv_obj_set_style_bg_color(sliding_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(sliding_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(sliding_panel, 0, 0);  // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(sliding_panel, 0, 0);        // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(sliding_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(sliding_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
@@ -370,8 +330,8 @@ lv_obj_t* main_menu_view_init(void) {
                               0);  // 设置标签宽度
   lv_obj_set_style_text_font(main_menu_hot_water_text,
                              &HarmonyOS_Sans_SC_Regular_26, 0);  // 设置标签宽度
-  lv_obj_set_width(main_menu_hot_water_text, 200);  // 设置标签宽度
-  lv_obj_set_height(main_menu_hot_water_text, 78);  // 设置标签高度
+  lv_obj_set_width(main_menu_hot_water_text, 200);               // 设置标签宽度
+  lv_obj_set_height(main_menu_hot_water_text, 78);               // 设置标签高度
   lv_obj_set_style_text_align(main_menu_hot_water_text, LV_TEXT_ALIGN_CENTER,
                               0);  // 添加文字居中对齐
   lv_obj_set_style_pad_top(

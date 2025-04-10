@@ -1,6 +1,4 @@
 #include "ui_app.h"
-#include <src/display/lv_display.h>
-#include "lvgl.h"
 #include "ui_style.h"
 #include "route.h"
 
@@ -9,5 +7,6 @@ void ui_app_init(void) {
   ui_style_init();
   init_routes();
 
-  navigate_to_view("cute_main_menu_view");
+  // 开启第一个页面
+  navigate_to_view("cute_main_menu_view", NULL);
 }

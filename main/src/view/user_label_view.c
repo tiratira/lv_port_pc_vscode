@@ -194,7 +194,7 @@ static void user_selected_method(const char* head_path, const char* head_text,
 static void sliding_panel_scroll_end_event(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_coord_t scroll_x = lv_obj_get_scroll_x(panel);
-  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);  // 获取左侧滚动区域
+  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);    // 获取左侧滚动区域
   lv_coord_t scroll_right = lv_obj_get_scroll_right(panel);  // 获取右侧滚动区域
   lv_coord_t panel_width = lv_obj_get_width(panel);
 
@@ -210,7 +210,7 @@ static void sliding_panel_scroll_end_event(lv_event_t* e) {
 // 定义返回按钮的点击事件回调函数
 static void back_btn_click_event(lv_event_t* e) {
   // 加载主菜单视图
-  navigate_to_view("main_menu_view");
+  navigate_to_view("main_menu_view", NULL);
 }
 
 lv_obj_t* user_label_view_init(void) {

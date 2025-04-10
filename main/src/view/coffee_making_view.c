@@ -51,12 +51,12 @@ static void coffee_making_sure_btn_event(lv_event_t* e) {
 // 定义一个函数，用于设置当前咖啡的取消按钮的点击事件
 void coffee_making_cancel_btn_event(lv_event_t* e) {
   // 点击取消后跳转到main_menu_view
-  navigate_to_view("main_menu_view");
+  navigate_to_view("main_menu_view", NULL);
 }
 // 定义返回按钮的点击事件回调函数
 static void back_btn_click_event(lv_event_t* e) {
   // 加载主菜单视图
-  navigate_to_view("main_menu_view");
+  navigate_to_view("main_menu_view", NULL);
 }
 
 // 制作内部面板的函数

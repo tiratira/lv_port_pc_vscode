@@ -1,15 +1,18 @@
+#include <src/core/lv_obj_event.h>
+#include <src/misc/lv_event.h>
 #include "global_def.h"
 #include "lvgl.h"
 #include "ui_style.h"
 #include "stdio.h"
 #include "route.h"
+#include "drink_type.h"
 
 LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_26)
 LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_30)
 
-extern lv_font_t* lanapixel_14;
-extern lv_font_t* lanapixel_20;
-extern lv_font_t* lanapixel_32;
+extern lv_font_t* lanapixel_sm;
+extern lv_font_t* lanapixel_md;
+extern lv_font_t* lanapixel_xl;
 
 lv_obj_t* cute_main_menu_view = 0;
 static lv_obj_t* img_main_menu_bg = 0;
@@ -37,31 +40,7 @@ static lv_obj_t* hot_drink_options_method(const char* icon_path,
 static lv_obj_t* cold_drink_options_method(const char* icon_path,
                                            const char* icon_text, int index);
 
-typedef enum drink_type {
-  HOT_DRINK,
-  COLD_DRINK,
-} drink_type_t;
-
-typedef struct drink_item_data {
-  const char* icon_path;
-  const char* icon_text;
-  const char* icon_text2;
-  drink_type_t type;
-} drink_item_data_t;
-
-static const drink_item_data_t drink_item_data[] = {
-    {LVGL_IMAGE_PATH("cute_main_menu/美式咖啡.png"), "美式咖啡", "Americano",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("cute_main_menu/拿铁咖啡.png"), "拿铁咖啡", "Coffee Latte",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("cute_main_menu/雪顶咖啡.png"), "雪顶咖啡",
-     "Cream Top Coffee", HOT_DRINK},
-    {LVGL_IMAGE_PATH("cute_main_menu/雪顶美式.png"), "雪顶美式",
-     "Cream Top Americano", HOT_DRINK},
-    {LVGL_IMAGE_PATH("cute_main_menu/卡布奇诺.png"), "卡布奇诺", "Cappuccino",
-     HOT_DRINK},
-    {LVGL_IMAGE_PATH("cute_main_menu/玛奇朵.png"), "玛奇朵", "Machiato",
-     HOT_DRINK}};
+extern drink_item_data_t* drink_item_data;
 
 static const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("cute_main_menu/icon_lock.png"),
@@ -73,22 +52,20 @@ static const char* main_menu_img_list[] = {
 
 // 新增创建函数（放在原有函数下方）
 static void create_hot_drinks() {
-  for (int i = 0; i < sizeof(drink_item_data) / sizeof(drink_item_data[0]);
-       i++) {
+  for (int i = 0; i < drink_count(); i++) {
     if (drink_item_data[i].type == HOT_DRINK) {
       hot_drink_options_method(drink_item_data[i].icon_path,
-                               drink_item_data[i].icon_text,
-                               drink_item_data[i].icon_text2, i);
+                               drink_item_data[i].title_cn,
+                               drink_item_data[i].title_en, i);
     }
   }
 }
 
 static void create_cold_drinks() {
-  for (int i = 0; i < sizeof(drink_item_data) / sizeof(drink_item_data[0]);
-       i++) {
+  for (int i = 0; i < drink_count(); i++) {
     if (drink_item_data[i].type == COLD_DRINK) {
       cold_drink_options_method(drink_item_data[i].icon_path,
-                                drink_item_data[i].icon_text, i);
+                                drink_item_data[i].title_cn, i);
     }
   }
 }
@@ -137,17 +114,21 @@ static void func_label_click_event(lv_event_t* e) {
   int index = (int)lv_event_get_user_data(e);
   switch (index) {
     case 0:
-      navigate_to_view("child_lock_view");
+      navigate_to_view("child_lock_view", NULL);
       break;
     case 1:
-      navigate_to_view("user_label_view");
+      navigate_to_view("user_label_view", NULL);
       break;
     case 2:
-      navigate_to_view("coffee_making_view");
+      navigate_to_view("coffee_making_view", NULL);
       break;
     default:
       break;
   }
+}
+
+static void coffee_select_event(lv_event_t* e) {
+  navigate_to_view("cute_coffee_config_view", lv_event_get_user_data(e));
 }
 
 // 制作通用的图片加文字这种表达形式的方法
@@ -248,7 +229,7 @@ static lv_obj_t* hot_drink_options_method(const char* icon_path,
   lv_obj_t* sliding_inside_text = lv_label_create(sliding_inside_panel);
   lv_label_set_text(sliding_inside_text, icon_text);
   lv_obj_set_style_text_color(sliding_inside_text, lv_color_black(), 0);
-  lv_obj_set_style_text_font(sliding_inside_text, lanapixel_20, 0);
+  lv_obj_set_style_text_font(sliding_inside_text, lanapixel_md, 0);
   // 居中对齐
   lv_obj_align(sliding_inside_text, LV_ALIGN_TOP_LEFT, 12, 160);
   lv_obj_add_flag(sliding_inside_text,
@@ -259,10 +240,13 @@ static lv_obj_t* hot_drink_options_method(const char* icon_path,
   lv_obj_set_size(sliding_inside_text2, 114, 100);
   lv_label_set_long_mode(sliding_inside_text2, LV_LABEL_LONG_WRAP);
   lv_obj_set_style_text_color(sliding_inside_text2, lv_color_hex(0x6E6E6E), 0);
-  lv_obj_set_style_text_font(sliding_inside_text2, lanapixel_14, 0);
+  lv_obj_set_style_text_font(sliding_inside_text2, lanapixel_sm, 0);
   lv_obj_align(sliding_inside_text2, LV_ALIGN_TOP_LEFT, 12, 190);
   lv_obj_add_flag(sliding_inside_text2,
                   LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
+
+  lv_obj_add_event_cb(sliding_inside_panel, coffee_select_event,
+                      LV_EVENT_CLICKED, (void*)(drink_item_data + index));
 
   return sliding_inside_panel;
 }
@@ -370,7 +354,7 @@ lv_obj_t* cute_main_menu_view_init(void) {
   lv_style_set_border_width(&hot_cold_btn_style, 0);
   lv_style_set_pad_all(&hot_cold_btn_style, 0);
   lv_style_set_size(&hot_cold_btn_style, 43, 32);
-  lv_style_set_text_font(&hot_cold_btn_style, lanapixel_20);
+  lv_style_set_text_font(&hot_cold_btn_style, lanapixel_md);
 
   lv_style_init(&hot_cold_btn_style_selected);
   lv_style_set_radius(&hot_cold_btn_style_selected, 16);
@@ -380,7 +364,7 @@ lv_obj_t* cute_main_menu_view_init(void) {
   lv_style_set_border_width(&hot_cold_btn_style_selected, 0);
   lv_style_set_pad_all(&hot_cold_btn_style_selected, 0);
   lv_style_set_size(&hot_cold_btn_style_selected, 43, 32);
-  lv_style_set_text_font(&hot_cold_btn_style_selected, lanapixel_20);
+  lv_style_set_text_font(&hot_cold_btn_style_selected, lanapixel_md);
 
   hot_btn = lv_button_create(cute_main_menu_view);
   lv_obj_remove_style_all(hot_btn);
@@ -406,13 +390,13 @@ lv_obj_t* cute_main_menu_view_init(void) {
   lv_label_set_text(welcome_label_1, "早上好！来杯咖啡开启活力满满的一天！");
   lv_obj_set_pos(welcome_label_1, 52, 45);
   lv_obj_set_style_text_color(welcome_label_1, lv_color_black(), 0);
-  lv_obj_set_style_text_font(welcome_label_1, lanapixel_20, 0);
+  lv_obj_set_style_text_font(welcome_label_1, lanapixel_md, 0);
 
   lv_obj_t* welcome_label_2 = lv_label_create(cute_main_menu_view);
   lv_label_set_text(welcome_label_2, "今天想喝点什么呢？");
   lv_obj_set_pos(welcome_label_2, 52, 80);
   lv_obj_set_style_text_color(welcome_label_2, lv_color_hex(0x9F73B3), 0);
-  lv_obj_set_style_text_font(welcome_label_2, lanapixel_14, 0);
+  lv_obj_set_style_text_font(welcome_label_2, lanapixel_sm, 0);
 
   // main_menu_hot_water_text = lv_label_create(cute_main_menu_view);
   // lv_label_set_text(main_menu_hot_water_text, "热饮");

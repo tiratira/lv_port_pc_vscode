@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#define DECLEAR_UI_VIEW(name)         \
-  extern lv_obj_t* name##_init(void); \
+#define DECLEAR_UI_VIEW(name)          \
+  extern lv_obj_t* name##_init(void*); \
   register_view(#name, name##_init);
 
 static view_info_t view_info_list[16] = {0};
@@ -24,7 +24,7 @@ void init_routes() {
   // 添加view就放在下面
   DECLEAR_UI_VIEW(cute_screen_saver_view)
   DECLEAR_UI_VIEW(cute_main_menu_view)
-  
+  DECLEAR_UI_VIEW(cute_coffee_config_view)
 }
 
 void register_view(const char* view_name, view_init_func init_func) {
@@ -47,22 +47,22 @@ void dispose_view(const char* view_name) {
   }
 }
 
-void init_view(const char* view_name) {
+void init_view(const char* view_name, void* args) {
   for (int i = 0; i < current_view_count; i++) {
     if (strcmp(view_name, view_info_list[i].view_name) == 0) {
       if (view_info_list[i].view == 0) {
-        view_info_list[i].view = view_info_list[i].init_func();
+        view_info_list[i].view = view_info_list[i].init_func(args);
       }
       return;
     }
   }
 }
 
-void navigate_to_view(const char* view_name) {
+void navigate_to_view(const char* view_name, void* args) {
   for (int i = 0; i < current_view_count; i++) {
     if (strcmp(view_name, view_info_list[i].view_name) == 0) {
       if (view_info_list[i].view == 0) {
-        view_info_list[i].view = view_info_list[i].init_func();
+        view_info_list[i].view = view_info_list[i].init_func(args);
       }
       lv_scr_load(view_info_list[i].view);
       dispose_view(current_view_name);

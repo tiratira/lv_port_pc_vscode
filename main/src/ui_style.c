@@ -8,16 +8,16 @@ lv_style_t button_style;
 lv_style_t slider_style;
 lv_style_t icon_style;
 
-lv_font_t *lanapixel_14;
-lv_font_t *lanapixel_20;
-lv_font_t *lanapixel_32;
+lv_font_t *lanapixel_sm;
+lv_font_t *lanapixel_md;
+lv_font_t *lanapixel_xl;
 
 void ui_style_init(void) {
-  lanapixel_14 =
-      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 14);
-  lanapixel_20 =
+  lanapixel_sm =
+      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 16);
+  lanapixel_md =
       lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 20);
-  lanapixel_32 =
+  lanapixel_xl =
       lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 32);
 
   lv_style_init(&button_style);

@@ -2,7 +2,9 @@
 #include "lvgl.h"
 #include "global_def.h"
 
-LV_FONT_DECLARE(lanapixel_32);
+extern lv_font_t* lanapixel_sm;
+extern lv_font_t* lanapixel_md;
+extern lv_font_t* lanapixel_xl;
 
 lv_obj_t* cute_screen_saver_view = 0;
 
@@ -74,7 +76,7 @@ lv_obj_t* cute_screen_saver_view_init(void) {
   lv_obj_t* label = lv_label_create(cute_screen_saver_view);
   lv_label_set_text(label, "点击屏幕任意位置");
   lv_obj_set_pos(label, 383, 505);
-  lv_obj_set_style_text_font(label, &lanapixel_32, 0);
+  lv_obj_set_style_text_font(label, lanapixel_xl, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(0x733490), 0);
 
   lv_timer_t* timer = lv_timer_create(animate_timer_cb, 1000, NULL);

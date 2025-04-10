@@ -17,7 +17,7 @@ extern lv_obj_t* main_menu_view;
 // 定义返回按钮的点击事件回调函数
 static void child_lock_unlock_event(lv_event_t* e) {
   // 加载主菜单视图
-  navigate_to_view("main_menu_view");
+  navigate_to_view("main_menu_view", NULL);
 }
 
 lv_obj_t* child_lock_view_init(void) {
@@ -45,7 +45,7 @@ lv_obj_t* child_lock_view_init(void) {
   lv_obj_set_style_text_color(child_lock_text, lv_color_hex(0xFFFFFF), 0);
   lv_obj_set_style_text_font(child_lock_text, &HarmonyOS_Sans_SC_Regular_26, 0);
   lv_obj_set_style_text_line_space(child_lock_text, 8, 0);  // 设置行间距为8像素
-  lv_obj_set_width(child_lock_text, 182);  // 设置标签宽度
+  lv_obj_set_width(child_lock_text, 182);                   // 设置标签宽度
   lv_label_set_long_mode(child_lock_text, LV_LABEL_LONG_WRAP);  // 启用自动换行
   lv_obj_set_style_text_align(child_lock_text, LV_TEXT_ALIGN_CENTER,
                               0);  // 添加文字居中对齐
