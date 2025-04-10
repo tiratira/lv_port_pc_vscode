@@ -1,6 +1,5 @@
-#include <src/misc/lv_style.h>
-#include <src/misc/lv_style_gen.h>
 #include "lvgl.h"
+#include "global_def.h"
 
 LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_26)
 LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_30)
@@ -9,7 +8,18 @@ lv_style_t button_style;
 lv_style_t slider_style;
 lv_style_t icon_style;
 
-void ui_style_init(void) { 
+lv_font_t *lanapixel_14;
+lv_font_t *lanapixel_20;
+lv_font_t *lanapixel_32;
+
+void ui_style_init(void) {
+  lanapixel_14 =
+      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 14);
+  lanapixel_20 =
+      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 20);
+  lanapixel_32 =
+      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 32);
+
   lv_style_init(&button_style);
   // 创建一个217, 54大小的矩形
   lv_style_set_size(&button_style, 217, 54);
@@ -23,6 +33,6 @@ void ui_style_init(void) {
   lv_style_set_radius(&button_style, 4);
   // 设置阴影颜色
   lv_style_set_shadow_color(&button_style, lv_color_hex(0x000000));
-  
+
   lv_style_set_text_font(&button_style, &HarmonyOS_Sans_SC_Regular_30);
 }

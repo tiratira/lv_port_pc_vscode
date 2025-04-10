@@ -9,5 +9,5 @@ void ui_app_init(void) {
   ui_style_init();
   init_routes();
 
-  navigate_to_view("coffee_making_view");
+  navigate_to_view("cute_main_menu_view");
 }

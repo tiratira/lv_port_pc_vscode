@@ -22,6 +22,9 @@ void init_routes() {
   DECLEAR_UI_VIEW(coffee_making_view)
 
   // 添加view就放在下面
+  DECLEAR_UI_VIEW(cute_screen_saver_view)
+  DECLEAR_UI_VIEW(cute_main_menu_view)
+  
 }
 
 void register_view(const char* view_name, view_init_func init_func) {
