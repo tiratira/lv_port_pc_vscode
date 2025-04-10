@@ -1,12 +1,3 @@
-#include <src/core/lv_obj.h>
-#include <src/core/lv_obj_pos.h>
-#include <src/core/lv_obj_style.h>
-#include <src/misc/lv_area.h>
-#include <src/misc/lv_color.h>
-#include <src/misc/lv_style_gen.h>
-#include <src/misc/lv_types.h>
-#include <src/widgets/image/lv_image.h>
-#include <src/widgets/label/lv_label.h>
 #include "global_def.h"
 #include "lvgl.h"
 #include "ui_style.h"
