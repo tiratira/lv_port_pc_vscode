@@ -36,7 +36,7 @@ static lv_obj_t* hot_drink_options_method(const char* icon_path,
 static lv_obj_t* cold_drink_options_method(const char* icon_path,
                                            const char* icon_text, int index);
 
-extern drink_item_data_t* drink_item_data;
+extern drink_item_data_t drink_item_data[];
 
 const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("main_menu_images/img_lock_screen_label_icon.png"),
@@ -131,7 +131,7 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_set_pos(outside_panel, x, y);
   lv_obj_set_style_bg_color(outside_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(outside_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(outside_panel, 0, 0);        // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(outside_panel, 0, 0);  // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(outside_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(outside_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
@@ -148,7 +148,7 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_set_align(inside_panel, LV_ALIGN_CENTER);  // 居中对齐()
   lv_obj_set_style_bg_color(inside_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(inside_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(inside_panel, 0, 0);        // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(inside_panel, 0, 0);  // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(inside_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(inside_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
@@ -164,7 +164,7 @@ static void build_label_method(const char* img_path, const char* text,
   lv_obj_set_size(mini_panel, 10, 64);
   lv_obj_set_style_bg_color(mini_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(mini_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(mini_panel, 0, 0);        // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(mini_panel, 0, 0);  // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(mini_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(mini_panel, LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
   lv_obj_add_flag(mini_panel, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
@@ -248,7 +248,7 @@ static lv_obj_t* cold_drink_options_method(const char* icon_path,
 static void sliding_panel_scroll_end_event(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_coord_t scroll_x = lv_obj_get_scroll_x(panel);
-  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);    // 获取左侧滚动区域
+  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);  // 获取左侧滚动区域
   lv_coord_t scroll_right = lv_obj_get_scroll_right(panel);  // 获取右侧滚动区域
   lv_coord_t panel_width = lv_obj_get_width(panel);
 
@@ -286,7 +286,7 @@ lv_obj_t* main_menu_view_init(void) {
   lv_obj_set_pos(sliding_panel, 0, 54);
   lv_obj_set_style_bg_color(sliding_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(sliding_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(sliding_panel, 0, 0);        // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(sliding_panel, 0, 0);  // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(sliding_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(sliding_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
@@ -330,8 +330,8 @@ lv_obj_t* main_menu_view_init(void) {
                               0);  // 设置标签宽度
   lv_obj_set_style_text_font(main_menu_hot_water_text,
                              &HarmonyOS_Sans_SC_Regular_26, 0);  // 设置标签宽度
-  lv_obj_set_width(main_menu_hot_water_text, 200);               // 设置标签宽度
-  lv_obj_set_height(main_menu_hot_water_text, 78);               // 设置标签高度
+  lv_obj_set_width(main_menu_hot_water_text, 200);  // 设置标签宽度
+  lv_obj_set_height(main_menu_hot_water_text, 78);  // 设置标签高度
   lv_obj_set_style_text_align(main_menu_hot_water_text, LV_TEXT_ALIGN_CENTER,
                               0);  // 添加文字居中对齐
   lv_obj_set_style_pad_top(

@@ -1,6 +1,6 @@
 #include "drink_type.h"
 
-static drink_item_data_t internal_drink_item_data[] = {
+drink_item_data_t drink_item_data[] = {
     {LVGL_IMAGE_PATH("cute_main_menu/美式咖啡.png"),
      LVGL_IMAGE_PATH("cute_main_menu/large/美式咖啡.png"), "美式咖啡",
      "Americano", HOT_DRINK},
@@ -20,8 +20,6 @@ static drink_item_data_t internal_drink_item_data[] = {
      LVGL_IMAGE_PATH("cute_main_menu/large/玛奇朵.png"), "玛奇朵", "Machiato",
      HOT_DRINK}};
 
-drink_item_data_t* drink_item_data = internal_drink_item_data;
-
 size_t drink_count() {
-  return sizeof(internal_drink_item_data) / sizeof(drink_item_data[0]);
+  return sizeof(drink_item_data) / sizeof(drink_item_data[0]);
 }

@@ -1,3 +1,5 @@
+#include <src/misc/lv_color.h>
+#include <src/misc/lv_style.h>
 #include "lvgl.h"
 #include "global_def.h"
 
@@ -7,6 +9,9 @@ LV_FONT_DECLARE(HarmonyOS_Sans_SC_Regular_30)
 lv_style_t button_style;
 lv_style_t slider_style;
 lv_style_t icon_style;
+
+lv_style_t btn_style_normal;
+lv_style_t btn_style_primary;
 
 lv_font_t *lanapixel_sm;
 lv_font_t *lanapixel_md;
@@ -35,4 +40,18 @@ void ui_style_init(void) {
   lv_style_set_shadow_color(&button_style, lv_color_hex(0x000000));
 
   lv_style_set_text_font(&button_style, &HarmonyOS_Sans_SC_Regular_30);
+
+  lv_style_init(&btn_style_normal);
+  lv_style_set_bg_color(&btn_style_normal, lv_color_hex(0xB5B5D1));
+  lv_style_set_bg_opa(&btn_style_normal, LV_OPA_100);
+  lv_style_set_radius(&btn_style_normal, LV_RADIUS_CIRCLE);
+  lv_style_set_text_color(&btn_style_normal, lv_color_hex(0xA27AB6));
+  lv_style_set_text_font(&btn_style_normal, lanapixel_md);
+
+  lv_style_init(&btn_style_primary);
+  lv_style_set_bg_color(&btn_style_primary, lv_color_hex(0xA27AB6));
+  lv_style_set_bg_opa(&btn_style_primary, LV_OPA_100);
+  lv_style_set_radius(&btn_style_primary, LV_RADIUS_CIRCLE);
+  lv_style_set_text_color(&btn_style_primary, lv_color_white());
+  lv_style_set_text_font(&btn_style_primary, lanapixel_md);
 }

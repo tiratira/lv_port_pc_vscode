@@ -16,6 +16,6 @@ typedef struct DrinkItemData {
   drink_type_t type;
 } drink_item_data_t;
 
-drink_item_data_t* drink_item_data;
+extern drink_item_data_t drink_item_data[];
 
 size_t drink_count();
