@@ -1,3 +1,4 @@
+#include <src/core/lv_obj_pos.h>
 #include <src/misc/lv_color.h>
 #include <src/misc/lv_style.h>
 #include "lvgl.h"
@@ -17,6 +18,17 @@ lv_font_t *lanapixel_sm;
 lv_font_t *lanapixel_md;
 lv_font_t *lanapixel_xl;
 lv_font_t *lanapixel_xxl;
+
+lv_obj_t *ui_text(lv_obj_t *parent, const char *text, lv_font_t *font,
+                  lv_align_t align, lv_coord_t x, lv_coord_t y,
+                  lv_color_t color) {
+  lv_obj_t *title = lv_label_create(parent);
+  lv_obj_align(title, align, x, y);
+  lv_label_set_text(title, text);
+  lv_obj_set_style_text_font(title, lanapixel_sm, 0);
+  lv_obj_set_style_text_color(title, color, 0);
+  return title;
+}
 
 void ui_style_init(void) {
   lanapixel_sm =

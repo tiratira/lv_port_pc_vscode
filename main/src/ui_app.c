@@ -10,5 +10,6 @@ void ui_app_init(void) {
 
   // 开启第一个页面
   // navigate_to_view("cute_main_menu_view", NULL);
-  navigate_to_view("cute_make_coffee_view", drink_item_data + 1);
+  // navigate_to_view("cute_make_coffee_view", drink_item_data + 1);
+  navigate_to_view("cute_make_finish_view", drink_item_data + 1);
 }

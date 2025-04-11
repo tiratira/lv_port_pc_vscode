@@ -8,12 +8,12 @@ extern lv_font_t* lanapixel_xl;
 
 lv_obj_t* cute_screen_saver_view = 0;
 
-lv_obj_t* flower_1 = 0;
-lv_obj_t* flower_2 = 0;
-lv_obj_t* flower_3 = 0;
-lv_obj_t* flower_4 = 0;
-lv_obj_t* flower_5 = 0;
-lv_obj_t* cat = 0;
+static lv_obj_t* flower_1 = 0;
+static lv_obj_t* flower_2 = 0;
+static lv_obj_t* flower_3 = 0;
+static lv_obj_t* flower_4 = 0;
+static lv_obj_t* flower_5 = 0;
+static lv_obj_t* cat = 0;
 
 static const char** cat_frames = (const char*[]){
     LVGL_IMAGE_PATH("cute_screen_saver/cat1.png"),
