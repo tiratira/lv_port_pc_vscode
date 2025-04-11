@@ -85,7 +85,7 @@ static void page_timer_cb(lv_timer_t* timer) {
     delay++;
     if (delay > 2) {
       lv_timer_delete(timer);
-      navigate_to_view("cute_coffee_config_view", drink_item);
+      navigate_to_view("cute_make_finish_view", drink_item);
     }
   }
 }

@@ -1,5 +1,3 @@
-#include <src/core/lv_obj_event.h>
-#include <src/misc/lv_event.h>
 #include "global_def.h"
 #include "lvgl.h"
 #include "ui_style.h"
@@ -131,6 +129,10 @@ static void coffee_select_event(lv_event_t* e) {
   navigate_to_view("cute_coffee_config_view", lv_event_get_user_data(e));
 }
 
+static void settings_click_event(lv_event_t* e) {
+  navigate_to_view("cute_settings_view", NULL);
+}
+
 // 制作通用的图片加文字这种表达形式的方法
 static void build_label_method(const char* img_path, const char* text,
                                int32_t x, int32_t y, int index) {
@@ -169,6 +171,10 @@ static void build_label_method(const char* img_path, const char* text,
   lv_image_set_src(img, img_path);
   lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_EVENT_BUBBLE);
   lv_obj_set_pos(img, x, y);
+  if (index == 3) {
+    lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(img, settings_click_event, LV_EVENT_CLICKED, 0);
+  }
 
   // // 隔开icon和文字的空隙
   // lv_obj_t* mini_panel = lv_obj_create(inside_panel);
@@ -289,7 +295,7 @@ static lv_obj_t* cold_drink_options_method(const char* icon_path,
 static void sliding_panel_scroll_end_event(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_coord_t scroll_x = lv_obj_get_scroll_x(panel);
-  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);  // 获取左侧滚动区域
+  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);    // 获取左侧滚动区域
   lv_coord_t scroll_right = lv_obj_get_scroll_right(panel);  // 获取右侧滚动区域
   lv_coord_t panel_width = lv_obj_get_width(panel);
 
@@ -326,7 +332,7 @@ lv_obj_t* cute_main_menu_view_init(void) {
   lv_obj_set_pos(sliding_panel, 0, 180);
   lv_obj_set_style_bg_color(sliding_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(sliding_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(sliding_panel, 0, 0);  // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(sliding_panel, 0, 0);        // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(sliding_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(sliding_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果

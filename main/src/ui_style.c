@@ -30,6 +30,13 @@ lv_obj_t *ui_text(lv_obj_t *parent, const char *text, lv_font_t *font,
   return title;
 }
 
+lv_obj_t *ui_image(lv_obj_t *parent, const char *path, int x, int y) {
+  lv_obj_t *img = lv_img_create(parent);
+  lv_img_set_src(img, path);
+  lv_obj_set_pos(img, x, y);
+  return img;
+}
+
 void ui_style_init(void) {
   lanapixel_sm =
       lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 16);

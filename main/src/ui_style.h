@@ -1,5 +1,6 @@
 #pragma once
 #include <src/misc/lv_area.h>
+#include <src/misc/lv_types.h>
 #include "lvgl.h"
 
 extern lv_style_t button_style;
@@ -48,9 +49,18 @@ extern lv_font_t *lanapixel_xxl;
     lv_obj_set_style_text_color(__title, _color, 0);      \
   }
 
+#define UI_IMG(_parent, _path, _x, _y)            \
+  {                                               \
+    lv_obj_t *__title = lv_image_create(_parent); \
+    lv_obj_set_pos(__title, _x, _y);              \
+    lv_image_set_src(__title, _path);             \
+  }
+
 lv_obj_t *ui_text(lv_obj_t *parent, const char *text, lv_font_t *font,
                   lv_align_t align, lv_coord_t x, lv_coord_t y,
                   lv_color_t color);
+
+lv_obj_t *ui_image(lv_obj_t *parent, const char *path, int x, int y);
 
 // 初始化所有的样式
 void ui_style_init(void);
