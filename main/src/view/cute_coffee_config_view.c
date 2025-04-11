@@ -1,10 +1,5 @@
-#include <src/core/lv_obj_event.h>
-#include <src/core/lv_obj_style.h>
-#include <src/misc/lv_event.h>
-#include <src/widgets/image/lv_image.h>
 #include "global_def.h"
 #include "drink_type.h"
-#include "lvgl.h"
 #include "ui_style.h"
 #include "route.h"
 
@@ -45,6 +40,10 @@ static void on_temp_lvl_clicked(lv_event_t* e) {
 
 static void on_back_clicked(lv_event_t* e) {
   navigate_to_view("cute_main_menu_view", 0);
+}
+
+static void on_next_clicked(lv_event_t* e) {
+  navigate_to_view("cute_make_coffee_view", drink_item);
 }
 
 lv_obj_t* cute_coffee_config_view_init(void* args) {
@@ -98,12 +97,10 @@ lv_obj_t* cute_coffee_config_view_init(void* args) {
   lv_obj_set_pos(coffee_title_2, 267, 242);
 
   lv_obj_t* back_btn = lv_btn_create(cute_coffee_config_view);
+  lv_obj_remove_style_all(back_btn);
+  lv_obj_add_style(back_btn, &btn_style_normal, 0);
   lv_obj_set_size(back_btn, 51, 51);
-  lv_obj_set_style_bg_color(back_btn, lv_color_hex(0xB5B5D1), 0);
-  lv_obj_set_style_radius(back_btn, 26, 0);
-  lv_obj_set_style_border_width(back_btn, 0, 0);
   lv_obj_set_pos(back_btn, 42, 119);
-  lv_obj_set_style_shadow_opa(back_btn, LV_OPA_TRANSP, 0);
 
   lv_obj_t* back_icon_img = lv_image_create(back_btn);
   lv_image_set_src(back_icon_img, LVGL_IMAGE_PATH("common/icon_back.png"));
@@ -252,6 +249,7 @@ lv_obj_t* cute_coffee_config_view_init(void* args) {
   lv_obj_t* btn_img = lv_image_create(close_btn);
   lv_image_set_src(btn_img, LVGL_IMAGE_PATH("common/icon_close.png"));
   lv_obj_center(btn_img);
+  lv_obj_add_event_cb(close_btn, on_back_clicked, LV_EVENT_CLICKED, NULL);
 
   lv_obj_t* like_btn = lv_btn_create(cute_coffee_config_view);
   lv_obj_remove_style_all(like_btn);
@@ -270,6 +268,8 @@ lv_obj_t* cute_coffee_config_view_init(void* args) {
   btn_img = lv_image_create(next_btn);
   lv_image_set_src(btn_img, LVGL_IMAGE_PATH("cute_main_menu/icon_next.png"));
   lv_obj_center(btn_img);
+
+  lv_obj_add_event_cb(next_btn, on_next_clicked, LV_EVENT_CLICKED, NULL);
 
   return cute_coffee_config_view;
 }

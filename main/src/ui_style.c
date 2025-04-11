@@ -16,6 +16,7 @@ lv_style_t btn_style_primary;
 lv_font_t *lanapixel_sm;
 lv_font_t *lanapixel_md;
 lv_font_t *lanapixel_xl;
+lv_font_t *lanapixel_xxl;
 
 void ui_style_init(void) {
   lanapixel_sm =
@@ -24,6 +25,8 @@ void ui_style_init(void) {
       lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 20);
   lanapixel_xl =
       lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 32);
+  lanapixel_xxl =
+      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 64);
 
   lv_style_init(&button_style);
   // 创建一个217, 54大小的矩形

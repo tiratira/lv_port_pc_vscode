@@ -25,6 +25,7 @@ void init_routes() {
   DECLEAR_UI_VIEW(cute_screen_saver_view)
   DECLEAR_UI_VIEW(cute_main_menu_view)
   DECLEAR_UI_VIEW(cute_coffee_config_view)
+  DECLEAR_UI_VIEW(cute_make_coffee_view)
 }
 
 void register_view(const char* view_name, view_init_func init_func) {
