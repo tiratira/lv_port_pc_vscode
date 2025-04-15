@@ -195,6 +195,7 @@ lv_obj_t* cute_make_coffee_view_init(void* args) {
   if (drink_item == 0) {
     return 0;
   }
+  data_model.progress = 0;
   cute_make_coffee_view = lv_obj_create(NULL);
   lv_obj_t* this = cute_make_coffee_view;
 
