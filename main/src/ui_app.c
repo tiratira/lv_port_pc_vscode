@@ -9,7 +9,7 @@ void ui_app_init(void) {
   init_routes();
 
   // 开启第一个页面
-  navigate_to_view("cute_main_menu_view", NULL);
+  navigate_to_view("cute_screen_saver_view", NULL);
   // navigate_to_view("cute_make_coffee_view", drink_item_data + 1);
   // navigate_to_view("cute_settings_view", drink_item_data + 1);
   // navigate_to_view("cute_bean_mode_view", drink_item_data + 1);

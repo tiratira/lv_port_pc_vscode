@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "lvgl.h"
 #include "global_def.h"
+#include "route.h"
 
 extern lv_font_t* lanapixel_sm;
 extern lv_font_t* lanapixel_md;
@@ -14,6 +15,7 @@ static lv_obj_t* flower_3 = 0;
 static lv_obj_t* flower_4 = 0;
 static lv_obj_t* flower_5 = 0;
 static lv_obj_t* cat = 0;
+static lv_timer_t* timer = 0;
 
 static const char** cat_frames = (const char*[]){
     LVGL_IMAGE_PATH("cute_screen_saver/cat1.png"),
@@ -21,6 +23,11 @@ static const char** cat_frames = (const char*[]){
     LVGL_IMAGE_PATH("cute_screen_saver/cat3.png"),
     LVGL_IMAGE_PATH("cute_screen_saver/cat4.png"),
 };
+
+static void on_btn_click(lv_event_t* event) {
+  lv_timer_delete(timer);
+  navigate_to_view("cute_main_menu_view", 0);
+}
 
 static void animate_timer_cb(lv_timer_t* timer) {
   static int32_t frame = 0;
@@ -79,7 +86,13 @@ lv_obj_t* cute_screen_saver_view_init(void) {
   lv_obj_set_style_text_font(label, lanapixel_xl, 0);
   lv_obj_set_style_text_color(label, lv_color_hex(0x733490), 0);
 
-  lv_timer_t* timer = lv_timer_create(animate_timer_cb, 1000, NULL);
+  lv_obj_t* btn = lv_button_create(cute_screen_saver_view);
+  lv_obj_remove_style_all(btn);
+  lv_obj_set_pos(btn, 0, 0);
+  lv_obj_set_size(btn, SCREEN_WIDTH, SCREEN_HEIGHT);
+  lv_obj_add_event_cb(btn, on_btn_click, LV_EVENT_CLICKED, NULL);
+
+  timer = lv_timer_create(animate_timer_cb, 1000, NULL);
 
   return cute_screen_saver_view;
 }

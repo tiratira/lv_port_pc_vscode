@@ -26,6 +26,9 @@ static lv_style_t hot_cold_btn_style_selected;
 static lv_obj_t* hot_btn = 0;
 static lv_obj_t* cold_btn = 0;
 
+static lv_timer_t* timer = 0;
+static int32_t count = 5;
+
 // 声明外部变量
 extern lv_obj_t* screen_saver_view;
 extern void screen_saver_view_init(void);
@@ -47,6 +50,16 @@ static const char* main_menu_img_list[] = {
     LVGL_IMAGE_PATH("cute_main_menu/icon_more.png"),
     LVGL_IMAGE_PATH("cute_main_menu/icon_next.png"),
 };
+
+static void animate_timer_cb(lv_timer_t* timer) {
+  count -= 1;
+  if (count <= 0) {
+    lv_timer_delete(timer);
+    navigate_to_view("cute_screen_saver_view", 0);
+  }
+}
+
+static void global_click_cb(lv_event_t* e) { count = 5; }
 
 // 新增创建函数（放在原有函数下方）
 static void create_hot_drinks() {
@@ -295,7 +308,7 @@ static lv_obj_t* cold_drink_options_method(const char* icon_path,
 static void sliding_panel_scroll_end_event(lv_event_t* e) {
   lv_obj_t* panel = lv_event_get_target(e);
   lv_coord_t scroll_x = lv_obj_get_scroll_x(panel);
-  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);    // 获取左侧滚动区域
+  lv_coord_t scroll_left = lv_obj_get_scroll_left(panel);  // 获取左侧滚动区域
   lv_coord_t scroll_right = lv_obj_get_scroll_right(panel);  // 获取右侧滚动区域
   lv_coord_t panel_width = lv_obj_get_width(panel);
 
@@ -309,6 +322,7 @@ static void sliding_panel_scroll_end_event(lv_event_t* e) {
 }
 
 lv_obj_t* cute_main_menu_view_init(void) {
+  count = 5;
   cute_main_menu_view = lv_obj_create(NULL);
   lv_obj_set_size(cute_main_menu_view, 1280, 480);
   lv_obj_set_style_bg_color(cute_main_menu_view, lv_color_hex(0x000000), 0);
@@ -332,7 +346,7 @@ lv_obj_t* cute_main_menu_view_init(void) {
   lv_obj_set_pos(sliding_panel, 0, 180);
   lv_obj_set_style_bg_color(sliding_panel, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(sliding_panel, LV_OPA_0, 0);
-  lv_obj_set_style_radius(sliding_panel, 0, 0);        // 设置倒角的半径为0像素
+  lv_obj_set_style_radius(sliding_panel, 0, 0);  // 设置倒角的半径为0像素
   lv_obj_set_style_border_width(sliding_panel, 0, 0);  // 设置边框的宽度为0像素
   lv_obj_set_scrollbar_mode(sliding_panel,
                             LV_SCROLLBAR_MODE_OFF);  // 取消滑动效果
@@ -465,6 +479,10 @@ lv_obj_t* cute_main_menu_view_init(void) {
   build_label_method(main_menu_img_list[3], "收藏", 643, 523, 3);
   build_label_method(main_menu_img_list[4], "收藏", 848, 511, 4);
   // build_label_method(main_menu_img_list[4], "快速冲洗", 1045, 406, 4);
+
+  timer = lv_timer_create(animate_timer_cb, 1000, NULL);
+  // 注册全局点击事件回调函数
+  lv_indev_add_event_cb(lv_indev_active(), global_click_cb, LV_EVENT_ALL, 0);
 
   return cute_main_menu_view;
 }

@@ -1,4 +1,3 @@
-#include <src/misc/lv_timer.h>
 #include "route.h"
 #include "ui_style.h"
 #include "global_def.h"
@@ -12,10 +11,10 @@ static lv_obj_t* flower_4 = 0;
 static lv_obj_t* flower_5 = 0;
 static lv_timer_t* timer = 0;
 static lv_obj_t* count_text = 0;
+static int32_t count = 5;
 
 static void animate_timer_cb(lv_timer_t* timer) {
   static int32_t frame = 0;
-  static int32_t count = 5;
   frame += 1;
 
   if (frame >= 4) {
@@ -25,8 +24,9 @@ static void animate_timer_cb(lv_timer_t* timer) {
   if (count > 0) {
     count--;
   } else {
-    lv_timer_delete(timer);
     navigate_to_view("cute_main_menu_view", 0);
+    lv_timer_delete(timer);
+    return;
   }
 
   int32_t rotation = frame * 450;
@@ -40,6 +40,7 @@ static void animate_timer_cb(lv_timer_t* timer) {
 }
 
 lv_obj_t* cute_make_finish_view_init(void* args) {
+  count = 5;
   cute_make_finish_view = lv_obj_create(NULL);
   lv_obj_t* this = cute_make_finish_view;
 
