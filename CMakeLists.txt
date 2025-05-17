@@ -9,7 +9,7 @@ option(LV_USE_DRAW_SDL "Use SDL draw unit" OFF)
 option(LV_USE_LIBPNG "Use libpng to decode PNG" OFF)
 option(LV_USE_LIBJPEG_TURBO "Use libjpeg turbo to decode JPEG" OFF)
 option(LV_USE_FFMPEG "Use libffmpeg to display video using lv_ffmpeg" ON)
-option(LV_USE_FREETYPE "Use freetype library" OFF)
+option(LV_USE_FREETYPE "Use freetype library" ON)
 
 # Set C and C++ standards
 set(CMAKE_C_STANDARD 99)
@@ -88,7 +88,7 @@ if(LV_USE_FFMPEG)
         target_link_libraries(main ${FFMPEG_DIR}/lib/avformat.lib ${FFMPEG_DIR}/lib/avcodec.lib ${FFMPEG_DIR}/lib/avutil.lib ${FFMPEG_DIR}/lib/swscale.lib)
     elseif(APPLE)
         message(STATUS "Darwin")
-        set(FFMPEG_DIR /opt/homebrew/Cellar/ffmpeg/7.1.1_1)
+        set(FFMPEG_DIR /opt/homebrew/Cellar/ffmpeg/7.1.1_2)
         target_include_directories(lvgl PUBLIC ${FFMPEG_DIR}/include)
         find_library(AVCODEC_LIBRARY avcodec)
         find_library(AVFORMAT_LIBRARY avformat)
@@ -104,9 +104,32 @@ endif()
 
 # Conditionally include and link FreeType if LV_USE_FREETYPE is enabled
 if(LV_USE_FREETYPE)
-    find_package(Freetype REQUIRED)
-    target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
-    target_link_libraries(main ${FREETYPE_LIBRARIES})
+    message(STATUS "FreeType")
+    set(FT_DISABLE_BROTLI
+        ON
+        CACHE BOOL "禁用Brotli")
+
+    set(FT_DISABLE_BZIP2
+        ON
+        CACHE BOOL "禁用Bzip2")
+
+    set(FT_DISABLE_HARFBUZZ
+        ON
+        CACHE BOOL "禁用Harfbuzz")
+
+    set(FT_DISABLE_PNG
+        ON
+        CACHE BOOL "禁用png")
+
+    set(FT_DISABLE_ZLIB
+        ON
+        CACHE BOOL "禁用zlib")
+    add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freetype)
+    # find_package(Freetype REQUIRED)
+    # target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
+    # target_link_libraries(main ${FREETYPE_LIBRARIES})
+    target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR}/libs/freetype/include)
+    target_link_libraries(main freetype)
 endif()
 
 if(NOT WIN32)

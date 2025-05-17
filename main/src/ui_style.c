@@ -38,14 +38,14 @@ lv_obj_t *ui_image(lv_obj_t *parent, const char *path, int x, int y) {
 }
 
 void ui_style_init(void) {
-  lanapixel_sm =
-      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 16);
-  lanapixel_md =
-      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 20);
-  lanapixel_xl =
-      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 32);
-  lanapixel_xxl =
-      lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 64);
+  // lanapixel_sm =
+  //     lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 16);
+  // lanapixel_md =
+  //     lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 20);
+  // lanapixel_xl =
+  //     lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 32);
+  // lanapixel_xxl =
+  //     lv_tiny_ttf_create_file("A:" LVGL_FONT_PATH("LanaPixel.ttf"), 64);
 
   lv_style_init(&button_style);
   // 创建一个217, 54大小的矩形
